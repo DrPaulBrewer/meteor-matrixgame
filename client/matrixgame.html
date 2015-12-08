@@ -1,0 +1,14 @@
+<head>
+  <title>matrixgame</title>
+</head>
+<body>
+  {{#if currentUser}}
+    {{#if adminUser}}
+     {{>adminTemplate}}
+    {{else}}
+     {{>userTemplate}}
+    {{/if}}
+  {{else}}
+    {{>loginTemplate}}
+  {{/if}}
+</body>

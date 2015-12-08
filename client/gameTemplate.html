@@ -1,0 +1,37 @@
+<template name="gameTemplate">
+  <div id="gameHelp"> 
+    Instructions:  During each period <strong>you will choose a {{mydim}} </strong> and <strong>the other participant will choose a {{otherdim}}</strong> by clicking on the table below.  The combination of row and column choices will determine the earnings that each participant receives as highlighted and shown below. While there is time remaining, you may change your selection as you wish.  Selections become final when the computer server's timer reaches zero, determining the earnings.
+  </div>
+  <hr>
+  <div id="gameTimerDiv">Time Remaining: {{timer}} sec
+  </div>
+  <hr>
+  <div id="gameTableDiv">
+    <table id="gameTable">
+      <tr>
+	<th></th>
+	{{#each cols}}
+	<th class="colNo{{@index}}">Col {{this}}</th>
+	{{/each}}
+      </tr>
+      {{#each rows}}
+      {{#let rowIndex=@index }}
+      <tr class="rowNo{{rowIndex}}">
+	<th class="rowNo{{rowIndex}}">Row {{this}}</th>
+	{{#each cols}}
+	<td class="rowNo{{rowIndex}} colNo{{@index}} {{cellstate rowIndex @index}}" id="cell{{rowIndex}}x{{@index}}" >You: {{getMyMatrix rowIndex @index}}<br>Them: {{getTheirMatrix rowIndex @index}}</td> 
+	{{/each}}
+      </tr>
+      {{/let}}
+      {{/each}}
+    </table>
+  </div>
+  <hr>
+  <div id="gameState">
+    <p>Your tentative selection is {{mydim}} {{dimname mychoice mydim}}</p>
+    <p>Their tenative selection is {{otherdim}} {{dimname otherchoice otherdim}}</p>
+    <p>Your tentative earnings is {{mypay}}</p>
+    <p>Their tenative earnings is {{otherpay}}</p>
+  </div>
+  To change your selection, click a {{mydim}} in the table above.
+</template>

@@ -1,0 +1,11 @@
+<template name="userTemplate">
+  {{#if statusIs "wait"}}
+  {{ >waitTemplate}}
+  {{/if}}
+  {{#if statusIs "game"}}
+  {{ >gameTemplate }}
+  {{/if}}
+  {{#if statusIs "done"}}
+  {{ >doneTemplate }}
+  {{/if}}
+</template>
