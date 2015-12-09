@@ -1,12 +1,9 @@
 Meteor.subscribe('userdata');
 
 Template.userTemplate.helpers({
-    statusIs: function(state){ 
-	return (Meteor.user().status===state);
+    screenIs: function(state){ 
+	return (Meteor.user().screen===state);
     }
 });
 
-Tracker.autorun(function(){
-    console.log('user information:');
-    console.log(Meteor.user());    
-});
+

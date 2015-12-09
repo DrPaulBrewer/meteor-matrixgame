@@ -1,13 +1,61 @@
-var myMatrix = [[0,0,0,0], [0,10,0,0], [0,0,20,0], [0,0,0,30]];
-var theirMatrix = [[0,0,0,0], [0,10,0,0], [0,5,5,5], [0,5,15,5]];
+var Games = new Mongo.Collection("games");
 
-var rownames = [0,1,2,3];
-var colnames = [0,'A','B','C'];
-
+myMatrix = [[0,0],[0,0]];
+theirMatrix = [[0,0],[0,0]];
+rownames = [0,1];
+colnames = ['A','B'];
 Session.set('mydim','row');
 Session.set('selected-row', 0);
 Session.set('selected-column', 0);
-Session.set('timer', 180);
+Session.set('timer', 999);
+
+
+Tracker.autorun(function(){ 
+    var myUser = Meteor.user();
+    if ('gameId' in myUser){
+	var gameId = Meteor.user().gameId;
+	if ((gameId) && (gameId !== Session.get('currentGameId'))){ 
+	    Session.set('currentGameId', gameId);
+	    Meteor.subscribe("gameById", gameId);
+	}
+    }
+});
+
+Tracker.autorun(function(){ 
+    var gameId = Session.get('currentGameId');
+    if (gameId){ 
+	console.log('downloading new game');
+	var game = Games.findOne({_id: gameId});
+	if (!game) return console.log("Error: new game not found!");
+	rownames = game.rownames;
+	colnames = game.colnames;
+	if (Meteor.userId() === game.players[0]){
+	    Session.set('mydim','row');
+	    myMatrix = game.rowMatrix;
+	    theirMatrix = game.colMatrix;
+	} else if (Meteor.userId() === game.players[1]){ 
+	    Session.set('mydim','column');
+	    myMatrix = game.colMatrix;
+	    theirMatrix = game.rowMatrix;
+	} else {
+	    console.log(game);
+	    return console.log("Error: can not determine if I play row or column");
+	}	
+    }
+});
+
+Tracker.autorun(function(){
+    var newGameId = Meteor.user().gameId;
+    var newGame = {};
+    if ((newGameId) && (newGameId != Session.get('currentGameId'))){
+	Meteor.subscribe("gameById", newGameId);
+	newGame = Games.findOne({_id: newGameId});
+	if (newGame){
+	    Session.set('currentGameId', newGameId);
+	    game = newGame;
+	}
+    }	
+});
 
 Template.gameTemplate.helpers({
     mydim: function(){ return Session.get('mydim')},

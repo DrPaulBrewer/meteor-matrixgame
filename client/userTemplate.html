@@ -1,11 +1,11 @@
 <template name="userTemplate">
-  {{#if statusIs "wait"}}
+  {{#if screenIs "wait"}}
   {{ >waitTemplate}}
   {{/if}}
-  {{#if statusIs "game"}}
+  {{#if screenIs "game"}}
   {{ >gameTemplate }}
   {{/if}}
-  {{#if statusIs "done"}}
+  {{#if screenIs "done"}}
   {{ >doneTemplate }}
   {{/if}}
 </template>
