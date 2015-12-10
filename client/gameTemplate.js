@@ -3,20 +3,33 @@ var Games = new Mongo.Collection("games");
 myMatrix = [[0,0],[0,0]];
 theirMatrix = [[0,0],[0,0]];
 rownames = [0,1];
-colnames = ['A','B'];
+colnames = [0,1];
 Session.set('mydim','row');
 Session.set('selected-row', 0);
 Session.set('selected-column', 0);
 Session.set('timer', 999);
 
+Tracker.autorun(function(){
+    // Chronos is a reactive var, will retrigger Tracker ever 1 sec
+    var unixTimeMS = +Chronos.currentTime();
+    var timeExpiresMS = Session.get('timeExpires');
+    if ((unixTimeMS) && (timeExpiresMS)){
+	if (unixTimeMS>timeExpiresMS){ 
+	    if (Session.get('timer')>0)
+		Session.set('timer',0);
+	} else {
+	    Session.set('timer', round((timeExpiresMS-unixTimeMS)/1000));
+	}
+    } 
+});
+    
 
 Tracker.autorun(function(){ 
     var myUser = Meteor.user();
-    if ('gameId' in myUser){
-	var gameId = Meteor.user().gameId;
-	if ((gameId) && (gameId !== Session.get('currentGameId'))){ 
-	    Session.set('currentGameId', gameId);
-	    Meteor.subscribe("gameById", gameId);
+    if ((myUser) && (myUser.gameId)){
+	if (myUser.gameId !== Session.get('currentGameId')){ 
+	    Session.set('currentGameId', myUser.gameId);
+	    Meteor.subscribe("gameById", myUser.gameId);
 	}
     }
 });
@@ -29,6 +42,7 @@ Tracker.autorun(function(){
 	if (!game) return console.log("Error: new game not found!");
 	rownames = game.rownames;
 	colnames = game.colnames;
+	Session.set('timeExpires', game.timeExpires);
 	if (Meteor.userId() === game.players[0]){
 	    Session.set('mydim','row');
 	    myMatrix = game.rowMatrix;
@@ -42,19 +56,6 @@ Tracker.autorun(function(){
 	    return console.log("Error: can not determine if I play row or column");
 	}	
     }
-});
-
-Tracker.autorun(function(){
-    var newGameId = Meteor.user().gameId;
-    var newGame = {};
-    if ((newGameId) && (newGameId != Session.get('currentGameId'))){
-	Meteor.subscribe("gameById", newGameId);
-	newGame = Games.findOne({_id: newGameId});
-	if (newGame){
-	    Session.set('currentGameId', newGameId);
-	    game = newGame;
-	}
-    }	
 });
 
 Template.gameTemplate.helpers({

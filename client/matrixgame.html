@@ -2,6 +2,8 @@
   <title>matrixgame</title>
 </head>
 <body>
+  {{ >headerTemplate }}
+  <hr>
   {{#if currentUser}}
     {{#if adminUser}}
      {{>adminTemplate}}
@@ -11,4 +13,6 @@
   {{else}}
     {{>loginTemplate}}
   {{/if}}
+  <hr>
+  {{ >footerTemplate }}
 </body>
