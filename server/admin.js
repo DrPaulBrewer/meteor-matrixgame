@@ -1,6 +1,9 @@
 // On server start, set up the adm/adm account, force logout old adm
 
+adminId=0;
+
 Meteor.startup(function(){
+    "use strict;"
     // adminId is an intentional global exported from here
     //    for use in server-side publish functions later
     var adminUser = Accounts.findUserByUsername('adm');
@@ -19,6 +22,7 @@ Meteor.startup(function(){
 // define adminsecrets as pretty much everything
 
 Meteor.publish("adminsecrets", function(){ 
+    "use strict;"
     if (this.userId !== adminId){
 	return this.error(
 	    new Meteor.Error("Forbidden","non-admin client attempted to subscribe to adminsecrets")
@@ -28,6 +32,7 @@ Meteor.publish("adminsecrets", function(){
     var allusers = Meteor.users.find({});
     var allgames = Games.find({});
     var allmatrices = Matrices.find({});
-    var allsessions = Sessions.find({});
-    return [allusers, allgames, allmatrices, allsessions];
+    var allexperiments = Experiments.find({});
+    var rollcall = RollCall.find({});
+    return [allusers, allgames, allmatrices, allexperiments, rollcall];
 });

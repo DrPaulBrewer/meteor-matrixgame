@@ -1,12 +1,15 @@
 Matrices = new Mongo.Collection('matrices');
 Games = new Mongo.Collection('games');
-Experiments = new Mongo.Collection('sessions');
+Experiments = new Mongo.Collection('experiments');
 Earnings = new Mongo.Collection('earnings');
 RollCall = new Mongo.Collection('rollcall');
 
-Meteor.subscribe('myuserdata');
-Meteor.subscribe('myrowgamedata');
-Meteor.subscribe('mycolgamedata');
-
+Tracker.autorun(function(){
+    if (Meteor.userId()){
+	Meteor.subscribe('myuserdata');
+	Meteor.subscribe('myrowgamedata');
+	Meteor.subscribe('mycolgamedata');
+    }
+});
 
     

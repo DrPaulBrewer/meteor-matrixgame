@@ -10,13 +10,13 @@ Meteor.publish('myuserdata', function(){
 
 
 Meteor.publish('myrowgamedata', function(){
-    var gameData = Games.find({visible: 1, rowUserId: this.userId},
+    var gameData = Games.find({visible: true, rowUserId: this.userId},
 			      {fields: { 'colUserId': 0 }});
     return gameData;
 });
 
 Meteor.publish('mycolgamedata', function(){
-    var gameData = Games.find({visible: 1, colUserId: this.userId},
+    var gameData = Games.find({visible: true, colUserId: this.userId},
 			      {fields: { 'rowUserId': 0 }});
     return gameData;
 });
