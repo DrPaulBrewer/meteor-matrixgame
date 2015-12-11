@@ -1,4 +1,6 @@
-* { font-size: 48px; }
+* { font-size: 48px; font-family: sans-serif }
+header * { font-size: 24px; }
+#signoffButton { float: right }
 #loginDiv { width: 600px; }
 #loginButton { height: 2em; width: 100%; }
 #loginTable { width: 100%; }

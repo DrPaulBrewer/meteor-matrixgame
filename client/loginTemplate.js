@@ -1,8 +1,9 @@
 Template.loginTemplate.events({
     'click #loginButton': function(event, template){ 
-	// fetch the id and password from the login form and make lower case
-	var id = $('#idInput').val().toLowerCase();
-	var pass = $('#passInput').val().toLowerCase();
+	// fetch the id and password from the login form
+	// make id and password input lower case and remove whitespace
+	var id = $('#idInput').val().toLowerCase().trim();
+	var pass = $('#passInput').val().toLowerCase().trim();
 	// sanity check id and password
 	if ((id.length<=0) || (pass.length<=0)) return false;
 	if ((/[^a-zA-Z0-9]/.test(id)) || (/[^a-zA-Z0-9]/.test(pass))) {

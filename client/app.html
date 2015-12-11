@@ -5,7 +5,7 @@
   {{ >headerTemplate }}
   <hr>
   {{#if currentUser}}
-    {{#if adminUser}}
+    {{#if currentUser.isAdmin}}
      {{>adminTemplate}}
     {{else}}
      {{>userTemplate}}

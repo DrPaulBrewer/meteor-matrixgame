@@ -1,5 +1,3 @@
-var Games = new Mongo.Collection("games");
-
 myMatrix = [[0,0],[0,0]];
 theirMatrix = [[0,0],[0,0]];
 rownames = [0,1];
@@ -25,12 +23,22 @@ Tracker.autorun(function(){
     
 
 Tracker.autorun(function(){ 
-    var myUser = Meteor.user();
-    if ((myUser) && (myUser.gameId)){
-	if (myUser.gameId !== Session.get('currentGameId')){ 
-	    Session.set('currentGameId', myUser.gameId);
-	    Meteor.subscribe("gameById", myUser.gameId);
-	}
+    var myUserId = Meteor.userId();
+    var unixTimeMS = +Chronos.currentTime();
+    if (myUserId && unixTimeMS){ 
+	if (Games){
+	    var myGame = Games.findOne({
+		timeBegins: {$lt: unixTimeMS},
+		timeEnds: {$gt: unixTimeMS},
+		$or: [
+		    {'rowUserId': myUserId },
+		    {'colUserId': myUserId }
+		]
+	    });
+	    if (myGame){
+		Session.set('currentGameId', myGame._id);
+	    }
+	}				
     }
 });
 
@@ -43,11 +51,11 @@ Tracker.autorun(function(){
 	rownames = game.rownames;
 	colnames = game.colnames;
 	Session.set('timeExpires', game.timeExpires);
-	if (Meteor.userId() === game.players[0]){
+	if (Meteor.userId() === game.rowUserId){
 	    Session.set('mydim','row');
 	    myMatrix = game.rowMatrix;
 	    theirMatrix = game.colMatrix;
-	} else if (Meteor.userId() === game.players[1]){ 
+	} else if (Meteor.userId() === game.colUserId){ 
 	    Session.set('mydim','column');
 	    myMatrix = game.colMatrix;
 	    theirMatrix = game.rowMatrix;

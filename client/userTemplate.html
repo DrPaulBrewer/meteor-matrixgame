@@ -2,6 +2,9 @@
   {{#if screenIs "wait"}}
   {{ >waitTemplate}}
   {{/if}}
+  {{#if screenIs "rollcall"}}
+  {{ >rollcallTemplate }}
+  {{/if}}
   {{#if screenIs "game"}}
   {{ >gameTemplate }}
   {{/if}}
