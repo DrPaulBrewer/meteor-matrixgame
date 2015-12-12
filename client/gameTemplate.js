@@ -2,10 +2,11 @@ myMatrix = [[0]];
 theirMatrix = [[0]];
 rownames = [0];
 colnames = [0];
-Session.set('mydim','row');
-Session.set('selected-row', 0);
-Session.set('selected-col', 0);
-Session.set('timer', 999);
+Session.setDefault('mydim','row');
+Session.setDefault('selected-row', 0);
+Session.setDefault('selected-col', 0);
+Session.setDefault('timer', 999999);
+Session.setDefault('currentGameId',0);
 
 Tracker.autorun(function(){
     "use strict;"
@@ -39,6 +40,12 @@ Tracker.autorun(function(){
 	    });
 	    if (myGame){
 		Session.set('currentGameId', myGame._id);
+	    } else {
+		if (Session.get('currentGameId')){ 
+		    // game expired or became inactive, ask server for wait screen
+		    Meteor.call('requestScreen','wait');
+		    Session.set('currentGameId', 0);
+		}
 	    }
 	}				
     }
@@ -74,7 +81,9 @@ Tracker.autorun(function(){
 	} else {
 	    console.log(game);
 	    return console.log("Error: can not determine if I play row or col");
-	}	
+	}
+	// ask server to set users screen to game
+	Meteor.call('requestScreen','game');
     }
 });
 
@@ -130,6 +139,7 @@ Template.gameTemplate.helpers({
 
 Template.gameTemplate.events({
     'click th,td': function(event, template){ 
+	'use strict';
 	var classes, rowNoMatches, colNoMatches, hasRowNo, hasColNom, rowNo, colNo;
 	var newChoice={};
 	var mydim = Session.get('mydim');

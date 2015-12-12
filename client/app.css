@@ -1,6 +1,6 @@
 * { font-size: 48px; font-family: sans-serif }
 header * { font-size: 24px; }
-#signoffButton { float: right }
+#signoffButton { float: right;}
 #loginDiv { width: 600px; }
 #loginButton { height: 2em; width: 100%; }
 #loginTable { width: 100%; }
@@ -8,4 +8,11 @@ header * { font-size: 24px; }
 .highlightCrossing { background-color: #ccffcc; font-size: 36px; }
 .highlightRow { background-color: #ccffff; }
 .highlightCol { background-color: #ffffcc; }
-
+.green { color: green }
+.red { color: red }
+.greenmark { color: green }
+#adminProcedure { font-size: 14px; }
+#adminProcedure * { font-size: 14px; }
+#adminRunMatrixList {  }
+#adminGameDurationInput { width: 60px; }
+#adminRollCallDurationInput { width: 40px }

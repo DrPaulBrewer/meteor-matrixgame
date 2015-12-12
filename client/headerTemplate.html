@@ -1,14 +1,16 @@
 <template name="headerTemplate">
   <header>
     <p>
-      {{connectStatus}}
+      <span class="{{connectStatusClass}}">{{connectStatus}}</span> 
       {{#if currentUser}}
       id:{{currentUser.username}}
       {{/if}}
-      {{#if currentUser.headerTimerEnds}}
+      {{#if showTimer}}
       Timer: {{timeRemaining}} sec
       {{/if}}
+      {{#if currentUser}}
       <button id="signoffButton">signoff</button>
+      {{/if}}
     </p>
   </header>
 </template>
