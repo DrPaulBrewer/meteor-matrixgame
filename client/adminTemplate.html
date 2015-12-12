@@ -18,7 +18,7 @@
       <li>Wait for participants to finish previous matrix:
 	{{#if gameFinished}}
 	{{ >greenmark }}
-	Up to {{countUsersByScreen "wait"}} users waiting on you (including inactive). 
+	Up to {{countUsersByScreen "wait"}} users waiting on you (including {{countUsersWithStrikes}} inactive). 
         {{else}}
         game ends in {{lastGameCountdown}} sec
 	{{/if}}

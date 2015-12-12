@@ -35,6 +35,9 @@ Template.adminTemplate.helpers({
     countUsersByScreen: function(s){
 	return Meteor.users.find({screen: s}).count();
     },
+    countUsersWithStrikes: function(){
+	return Meteor.users.find({strikes: {$gt: 0}}).count();
+    }
     gameFinished: function(){ 
 	return (allGamesTimeEnds() < +Chronos.currentTime());
     },

@@ -23,7 +23,8 @@ Meteor.methods({
 	    throw new Meteor.Error("Forbidden","only admin can call this function");
 	Meteor.users.update({'screen': 'rollcall'},
 			    { $set: {screen: 'wait'},
-			      $unset: { headerTimerEnds: ''}
+			      $unset: { headerTimerEnds: ''},
+			      $inc: {strikes: 1}
 			    },
 			    {multi: true}
 			   );
@@ -37,7 +38,7 @@ Meteor.methods({
 		    _id: this.userId
 		},
 		{ 
-		    $set: { screen: 'wait' } 
+		    $set: { screen: 'wait', strikes: 0 } 
 		}
 	    );
 	    RollCall.upsert({userId: this.userId},
@@ -52,7 +53,6 @@ Meteor.methods({
 	check(gameFactory, Match.ObjectIncluding(gameFactorySpec));
 	var roll = (RollCall
 		    .find({})
-		    .fetch()
 		    .map(function(x){ return x.userId })
 		    );
 	var pairs = [];
