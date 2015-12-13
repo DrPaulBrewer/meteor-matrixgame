@@ -140,12 +140,12 @@ Template.gameTemplate.helpers({
 Template.gameTemplate.events({
     'click th,td': function(event, template){ 
 	'use strict';
-	var classes, rowNoMatches, colNoMatches, hasRowNo, hasColNom, rowNo, colNo;
+	var classes, rowNoMatches, colNoMatches, hasRowNo, hasColNo, rowNo, colNo;
 	var newChoice={};
 	var mydim = Session.get('mydim');
 	if (Session.get('timer')<=0) return false;
 	try { 
-	    classes = $(event.toElement).attr("class");
+	    classes = event.currentTarget.className;
 	    rowNoMatches = classes.match(/rowNo(\d+)/);
 	    colNoMatches = classes.match(/colNo(\d+)/);
 	    hasRowNo = (rowNoMatches) && (rowNoMatches.length>1);
@@ -157,7 +157,7 @@ Template.gameTemplate.events({
 	    if (mydim in newChoice){ 
 		Session.set('selected-'+mydim, newChoice[mydim]);
 	    }
-	} catch(e) { console.log(e);}
+	} catch(e) { console.log(event); console.log(template); console.log(e);}
     }
 });
 

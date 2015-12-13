@@ -7,7 +7,7 @@ Meteor.methods({
 	if (timerEnds > ( +new Date() ) ){ 
 	    // delete the records of the previous RollCall
 	    RollCall.remove({});
-	    // put all logged-in users onto rollcall screen
+	    // put all users assigned to some screen onto rollcall screen
 	    Meteor.users.update({'screen': {$exists: true}},
 				{ $set: {screen: 'rollcall',
 					 headerTimerEnds: timerEnds}
@@ -19,6 +19,8 @@ Meteor.methods({
 
     endRollCall: function(){
 	"use strict;"
+	// Note: this function does not delete the contents of RollCall, see startRollCall for that
+	// puts all users still on rollcall screen back onto wait screen, clears headerTimer, and adds Strike
 	if (this.userId !== adminId)
 	    throw new Meteor.Error("Forbidden","only admin can call this function");
 	Meteor.users.update({'screen': 'rollcall'},
@@ -32,10 +34,12 @@ Meteor.methods({
 
     clickReadyButton: function(){
 	"use strict;"
+	// move clicking user from rollcall screen to wait screen and reset user strikes to 0
 	if (this.userId){
 	    Meteor.users.update(
 		{
-		    _id: this.userId
+		    _id: this.userId, 
+		    screen:'rollcall'
 		},
 		{ 
 		    $set: { screen: 'wait', strikes: 0 } 
@@ -48,6 +52,8 @@ Meteor.methods({
 
     pairRollBeginExperiment: function(gameFactory){
 	"use strict;"
+	// pull random pairs of users from RollCall and assign them a new matrix game
+	// Games are constructed from the gameFactory parameter 
 	if (this.userId !== adminId)
 	    throw new Meteor.Error("Forbidden","only admin can call this function");
 	check(gameFactory, Match.ObjectIncluding(gameFactorySpec));

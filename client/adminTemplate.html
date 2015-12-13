@@ -9,21 +9,25 @@
   </p>
   <p>To run a matrix game:
     <ol id="adminRunMatrixList">
-      <li><input type="file" id="adminFileInput"></li>
-      <li><button id="adminReadFileButton">Read File</button> 
+      <li><input type="file" id="adminFileInput"> 
 	{{#if goodFile}}
 	{{ >greenmark }}
 	{{/if}}
-	and scroll down to check output</li>
-      <li>Wait for participants to finish previous matrix:
+      </li>
+      <li>Finish previous matrix:
 	{{#if gameFinished}}
 	{{ >greenmark }}
-	Up to {{countUsersByScreen "wait"}} users waiting on you (including {{countUsersWithStrikes}} inactive). 
+	Up to {{countUsersByScreen "wait"}} users now waiting on <em>you</em> (including {{countUsersWithStrikes}} inactive). 
         {{else}}
         game ends in {{lastGameCountdown}} sec
 	{{/if}}
       </li>
-      <li>Roll call with <input type="number" id="adminRollCallDurationInput" value="10"> second timer. Click:<button id="adminRollCallButton">Roll Call</button></li>
+      <li>Roll call with <input type="number" id="adminRollCallDurationInput" value="15"> second timer. 
+	Click:<button id="adminRollCallButton">Roll Call</button>
+	{{#if rollCallToggle}}
+	{{ >greenmark }}
+	{{/if}}
+      </li>
       <li>Wait for participants to finish roll call. 
 	{{#if rollcallToggle}}
   	  {{#if rollcallFinished}}
