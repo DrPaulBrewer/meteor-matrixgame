@@ -1,28 +1,7 @@
-myMatrix = [[0]];
-theirMatrix = [[0]];
-rownames = [0];
-colnames = [0];
-Session.setDefault('mydim','row');
-Session.setDefault('selected-row', 0);
-Session.setDefault('selected-col', 0);
-Session.setDefault('timer', 999999);
-Session.setDefault('currentGameId',0);
 
-Tracker.autorun(function(){
-    "use strict;"
-    // Chronos is a reactive var, will retrigger Tracker ever 1 sec
-    var unixTimeMS = +Chronos.currentTime();
-    var timeExpiresMS = Session.get('timeExpires');
-    if ((unixTimeMS) && (timeExpiresMS)){
-	if (unixTimeMS>timeExpiresMS){ 
-	    if (Session.get('timer')>0)
-		Session.set('timer',0);
-	} else {
-	    Session.set('timer', round((timeExpiresMS-unixTimeMS)/1000));
-	}
-    } 
-});
-    
+myGame = {};
+Session.setDefault('currentGameId',0);
+Session.setDefault('gameUpdated',0);
 
 Tracker.autorun(function(){
     "use strict;"
@@ -30,14 +9,17 @@ Tracker.autorun(function(){
     var unixTimeMS = +Chronos.currentTime();
     if (myUserId && unixTimeMS){ 
 	if (Games){
-	    var myGame = Games.findOne({
-		timeBegins: {$lt: unixTimeMS},
-		timeEnds: {$gt: unixTimeMS},
-		$or: [
-		    {'rowUserId': myUserId },
-		    {'colUserId': myUserId }
-		]
-	    });
+	    var myGame = Games.findOne(
+		{
+		    timeBegins: {$lt: unixTimeMS},
+		    timeEnds: {$gt: unixTimeMS},
+		    $or: [
+			{'rowUserId': myUserId },
+			{'colUserId': myUserId }
+		    ]
+		},
+		{ fields: {_id: 1} }
+	    );
 	    if (myGame){
 		Session.set('currentGameId', myGame._id);
 	    } else {
@@ -52,89 +34,115 @@ Tracker.autorun(function(){
 });
 
 Tracker.autorun(function(){
-    "use strict;"
+    'use strict';
     var gameId = Session.get('currentGameId');
-    if (gameId){ 
-	console.log('downloading new game');
-	var game = Games.findOne({_id: gameId},
-				{fields: {
-				    rownames: 1, 
-				    colnames: 1, 
-				    timeExpires: 1,
-				    rowMatrix: 1,
-				    colMatrix: 1,
-				    rowUserId: 1,
-				    colUserId: 1
-				}});
-	if (!game) return console.log("Error: new game not found!");
-	rownames = game.rownames;
-	colnames = game.colnames;
-	Session.set('timeExpires', game.timeExpires);
-	if (Meteor.userId() === game.rowUserId){
-	    Session.set('mydim','row');
-	    myMatrix = game.rowMatrix;
-	    theirMatrix = game.colMatrix;
-	} else if (Meteor.userId() === game.colUserId){ 
-	    Session.set('mydim','col');
-	    myMatrix = game.colMatrix;
-	    theirMatrix = game.rowMatrix;
-	} else {
-	    console.log(game);
-	    return console.log("Error: can not determine if I play row or col");
-	}
-	// ask server to set users screen to game
-	Meteor.call('requestScreen','game');
+    if (gameId){
+	myGame = Games.findOne({_id: gameId});
+	if (Meteor.user().screen!=="game") 
+	    Meteor.call('requestScreen', 'game');
+	Session.set('gameUpdated', +new Date());
+    } else {
+	myGame = {};
+	Session.set('gameUpdated', +new Date());
     }
 });
 
-Tracker.autorun(function(){
-    "use strict;"
-    var mydim = Session.get('mydim');
-    var mychoice = Session.get('selected-'+mydim);
-    var gameId = Session.get('currentGameId');
-    if (gameId)
-	Meteor.call('gameMove', Session.get('currentGameId'), mydim, mychoice);
-});
+var g = {
+    mydim: function(){ 
+	'use strict';
+	if (!myGame) return;    
+	if (Meteor.userId() === myGame.rowUserId) return 'row';
+	if (Meteor.userId() === myGame.colUserId) return 'col';
+	return;
+    },
 
-Tracker.autorun(function(){
-    "use strict;"
-    var gameId = Session.get('currentGameId');
-    if (!gameId) return;
-    var mydim = Session.get('mydim');
-    var myGame = Games.findOne({_id: gameId},
-			       {fields: {'row': 1, 'col': 1}}
-			      );
-    if (mydim==='row' && ('col' in myGame)) Session.set('selected-col',myGame.col);
-    if (mydim==='col' && ('row' in myGame)) Session.set('selected-row',myGame.row);
-});
+    otherdim: function(){
+	'use strict';
+	var d = this.mydim();
+	if (d==='row') return 'col';
+	if (d==='col') return 'row';
+	return;
+    },
+
+    mychoice: function(){
+	'use strict';
+	if (!myGame) return;
+	return myGame[this.mydim()];
+    },
+
+    otherchoice: function(){
+	'use strict';
+	if (!myGame) return;
+	return myGame[this.otherdim()];
+    },
+    
+    myMatrix: function(){
+	'use strict';
+	var idx = this.mydim()+'Matrix';
+	if (!myGame) return;
+	if (arguments.length===0)
+	    return myGame[idx];
+	return myGame[idx][arguments[0]][arguments[1]];
+    },
+
+    otherMatrix: function(){
+	'use strict';
+	var idx = this.otherdim()+'Matrix';
+	if (!myGame) return;
+	if (arguments.length===0)
+	    return myGame[idx];
+	return myGame[idx][arguments[0]][arguments[1]];	
+    },
+
+    updated: function(func){ 
+	'use strict';
+	// this is a function factory for reactive templates below
+	return function(){
+	    var args = Array.prototype.slice.call(arguments);
+	    var updated = Session.get('gameUpdated'); 
+	    // throwaway var triggers Reactive updates when game updated
+	    if (typeof(func)==='function')
+		return func.apply({}, args);
+	    // func can be a string
+	    // if so, it may refer to a method of g, or a property of myGame
+	    if (typeof(g[func])==='function'){
+		return g[func].apply(g, args);
+	    }
+	    if (!myGame) return null;
+	    if ((func in myGame) && (myGame.hasOwnProperty(func)))
+		return myGame[func];
+	    return null;
+	}
+    }
+};
 
 Template.gameTemplate.helpers({
-    mydim: function(){ return Session.get('mydim')},
-    otherdim: function(){ if (Session.get('mydim')==='row') return 'col';
-			  return 'row'; 
-			},
-    timer: function(){ return Session.get('timer')}, 
-    cols: function(){ Session.get('currentGameId'); return colnames },
-    rows: function(){ Session.get('currentGameId'); return rownames },
+    mydim: g.updated('mydim'),
+    otherdim: g.updated('otherdim'),
+    cols: g.updated('colnames'),
+    rows: g.updated('rownames'),
     dimname: function(index, dimtype){ 
-	if (dimtype.indexOf('c')===0) return colnames[index];
-	return rownames[index];
-    },
-    mychoice: function(){ return Session.get('selected-'+Session.get('mydim')) },
-    otherchoice: function(){ return Session.get('selected-'+((Session.get('mydim')==='row')?'col':'row')); },
-    getMyMatrix: function(r,c){ Session.get('currentGameId'); return myMatrix[r][c] },
-    getTheirMatrix: function(r,c){ Session.get('currentGameId'); return theirMatrix[r][c] },
-    mypay: function(){ return myMatrix[Session.get('selected-row')][Session.get('selected-col')]},
-    otherpay: function(){ return theirMatrix[Session.get('selected-row')][Session.get('selected-col')]},
-    cellstate: function(r,c){ 
-	if ((r===Session.get('selected-row')) && (c===Session.get('selected-col'))) 
-	    return 'highlightCrossing';
-	if (r===Session.get('selected-row')) return 'highlightRow';
-	if (c===Session.get('selected-col')) return 'highlightCol';
+	Session.get('gameUpdated');
+	if (!myGame) return '';
+	if ((index===0) || (index)) {
+	    if (dimtype.indexOf('c')===0) return myGame.colnames[index];
+	    return myGame.rownames[index];
+	}
 	return '';
-    }
-    
-    
+    },
+    mychoice: g.updated('mychoice'),
+    otherchoice: g.updated('otherchoice'),
+    getMyMatrix: g.updated('myMatrix'), 
+    getTheirMatrix: g.updated('otherMatrix'),
+    mypay: g.updated(function(){ return g.myMatrix(myGame.row,myGame.col) }),
+    otherpay: g.updated(function(){ return g.otherMatrix(myGame.row,myGame.col) }),
+    cellstate: g.updated(function(r,c){ 
+	if ((r===myGame.row) && (c===myGame.col))
+	    return 'highlightCrossing';
+	if (r===myGame.row) return 'highlightRow';
+	if (c===myGame.col) return 'highlightCol';
+	return '';
+    })    
 });
 
 Template.gameTemplate.events({
@@ -142,7 +150,7 @@ Template.gameTemplate.events({
 	'use strict';
 	var classes, rowNoMatches, colNoMatches, hasRowNo, hasColNo, rowNo, colNo;
 	var newChoice={};
-	var mydim = Session.get('mydim');
+	var mydim = g.mydim();
 	if (Session.get('timer')<=0) return false;
 	try { 
 	    classes = event.currentTarget.className;
@@ -155,7 +163,8 @@ Template.gameTemplate.events({
 	    if (hasRowNo) newChoice.row = rowNo;
 	    if (hasColNo) newChoice.col = colNo;
 	    if (mydim in newChoice){ 
-		Session.set('selected-'+mydim, newChoice[mydim]);
+//	Meteor.call('gameMove', Session.get('currentGameId'), mydim, mychoice);
+		Meteor.call('gameMove', Session.get('currentGameId'), mydim, newChoice[mydim]);
 	    }
 	} catch(e) { console.log(event); console.log(template); console.log(e);}
     }

@@ -226,7 +226,7 @@ Template.adminTemplate.events({
 		    // the server call to start the experiment succeeded
 		    // The GO button was disabled earlier. make the admin run another roll call.
 		    // end the previous rollcall and increment baseball strikes
-		    Meteor.call('endRollCall', function(e){ console.log(e); });
+		    Meteor.call('endRollCall', function(e){ if (e) console.log(e); });
 		}
 	    });
 	} catch(e){ console.log(e); }
