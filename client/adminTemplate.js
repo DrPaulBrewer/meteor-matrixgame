@@ -5,6 +5,11 @@ Session.setDefault({
 
 nextGame = {};
 
+// checkGameSpec(g) checks that the game in g is valid as to
+//   the gameFileSpec in /lib/gameFactorySpec and that the
+//   game matrices, and the rownames and colnames have properly matching
+//    dimensions.  It also checks that an initial row/col is defined.
+
 var checkGameSpec = function(g){
     "use strict";
     var ok = false;
@@ -28,6 +33,7 @@ var checkGameSpec = function(g){
 	    ++i;
 	}
     } catch(e) { 
+	// in case some game property is ill-defined
 	ok = false; 
 	console.log("in checkGameSpec");
 	console.log(e);
@@ -35,8 +41,14 @@ var checkGameSpec = function(g){
     return ok;
 };
 
-var toNextGame = function(next){
+
+// toNextGame() is a function that we will use with CSV.call to parse the incoming .csv file
+// The csv data is put into the function by the CSV handler using "this"
+// parsed data is stored in "nextGame"
+
+var toNextGame = function(){
     "use strict";
+    // set nextGame to a blank game, erasing previous
     nextGame = {
 	rowMatrix: [],
 	colMatrix: [],
@@ -45,6 +57,9 @@ var toNextGame = function(next){
 	row: 0,
 	col: 0
     }
+    // examine the number of rows of .csv file data to reject junk
+    // 250 rows is plenty for 2 100x100 game matrices and the other settings
+    // if the data has more rows than that something is wrong
     var shared = this;
     if ( (!shared) || (!shared.data) || (!shared.data.rows) )
 	throw "Read Error:  could not find any data from file. Maybe the file does not exist or is inaccessible.";
@@ -53,22 +68,26 @@ var toNextGame = function(next){
     if (shared.data.rows.length>250)
 	throw "File REJECTED. This file has over 250 rows and is probably not the correct file or in the correct format.";
     var rows = shared.data.rows;
-    var i;
-    var mode = 'comment';
     console.log('.csv file dump follows');
     var needRowLog = false;
+    // if the browser has console.table, dump the entire file into a console table
+    // otrherwise, set a flag to do it one row at a time 
     if (console.table) 
 	console.table(rows);
     else 
 	needRowLog = true;
+    // mode will be used to track col 1 csv value, ignoring blank cell
+    var mode = 'comment';
     rows.forEach(function(row){
 	"use strict";
 	try {
 	    if (row && row.length){
 		if (needRowLog) console.log(row.join(","));
 		if (row[0] && row[0].length) mode = row[0].toLowerCase().trim();
-		// do not try to extract data elements if the initial data cell is empty
+		// data should always be on or begin on the 2nd col cell so
+		// if the 2nd col cell (which is row[1]) is blank then ignore the row
 		if ((row.length<2) || (row[1].toString().trim().length===0)) return;
+		// here there is data on this row to add to a property of nextGame
 		switch(mode){
 		case 'rowmatrix':
 		    nextGame.rowMatrix.push(row.slice(1));
@@ -90,13 +109,20 @@ var toNextGame = function(next){
 		case 'comment':
 		    break;
 		default:
-		    console.log('unrecognized row type: '+mode);
+		    console.log('.csv file, ignored row: '+mode);
 		    break;
 		}
 	    }
 	} catch(e) {console.log(e)};
     });
 };
+
+
+// armFileInput is a function to activate the file chooser box and connects it to the CSV parser
+// and toNextGame extraction function. CSV.begin() will deactivate the file chooser on processing to avoid
+// multiple clicks.  Finally, we reactivate the file chooser 1 sec after the data has been processed.
+// 
+// Session var adminGoodCSVFile is used to report the results of parsing and extraction to Trackers below
 
 var armFileInput = function(){
     'use strict';
@@ -116,6 +142,8 @@ var armFileInput = function(){
 	}
     );
 };
+
+// allGamesTimeEnds is a function to determine when the last currently active game ends
 
 var allGamesTimeEnds = function(){ 
     "use strict";
@@ -163,6 +191,8 @@ Template.adminTemplate.helpers({
     }
 });
 
+// getDurationInputMS examines number box input data for valid input and returns millisecond duration or throws an error
+
 var getDurationInputMS = function(jqselector){ 
     var durationMS = 1000*parseInt($(jqselector).val());
     if (!(durationMS>0)) 
@@ -180,7 +210,8 @@ Template.adminTemplate.events({
     'click #adminRollCallButton': function(event, template){
 	'use strict';
 	// if you have run a roll call, you need to use it. duplicates are potentially messy.
-	if (Session.get('rollCallToggle')) return console.log('roll call begun. running a second rollcall is not recommended as this may confuse participants.  To do it anyway, refresh the admin browser window and that will clear the rollcall checkmark on the admin screen');
+	if (Session.get('rollCallToggle')) 
+	    return console.log('roll call begun. running a second rollcall is not recommended as this may confuse participants.  To do it anyway, refresh the admin browser window and that will clear the rollcall checkmark on the admin screen');
 	try {
 	    // this next function throws on invalid user input
 	    var rcDuration = getDurationInputMS('#adminRollCallDurationInput');
@@ -214,22 +245,27 @@ Template.adminTemplate.events({
 	if (Session.get('rollcallTimeEnds') > (+new Date()))
 	    return console.log('need to wait until rollcall ends before starting next matrix game');
 	if (!Session.get('adminGoodCSVFile'))
-	    return console.log('can not GO: need confirmed good .csv file to configfure matrix game');	
+	    return console.log('can not GO: need confirmed good .csv file to configfure matrix game');
 	try {
 	    // this next function throws on invalid user input
 	    var gameDuration = getDurationInputMS('#adminGameDurationInput');
 	    var now = +new Date();
-	    // slackMS allows for some internet delay in communicating the start of the game
+	    // slackMS allows for some internet delay in communicating the start of the game. 500 = 0.5 sec
 	    var slackMS = 500;
+	    // every game needs these properties
 	    var initGame = {
 		visible: true,
 		moves: []
 	    };
+	    // game also needs a begin and end time
 	    var gameTimer = {
 		timeBegins: now+slackMS,
 		timeEnds: now+gameDuration+slackMS,
 	    };
+	    // assemble the game from various variables into var gameFactory
 	    var gameFactory = Object.assign({}, nextGame, gameTimer, initGame);
+	    // tell the server to call the pairRollBeginExperiment function that
+	    // makes multiple games from gameFactory to pairs of participants randomly pulled from roll call
 	    Meteor.call('pairRollBeginExperiment', gameFactory, function(e){
 		if (e){
 		    // there was an error running the server call to start the experiment
@@ -247,6 +283,11 @@ Template.adminTemplate.events({
 	} catch(e){ console.log(e); }
     }
 });
+
+// Template...onRendered is called on admin screen refresh or new admin login
+//    set the good .csv checkmark based on the goodness of existing data
+//    clear the good roll call checkmark
+//    disable the GO button until the file is loaded and/or rollcall run
 
 Template.adminTemplate.onRendered(function(){
     Session.set('adminGoodCSVFile', checkGameSpec(nextGame));
