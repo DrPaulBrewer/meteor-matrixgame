@@ -1,13 +1,58 @@
-
 myGame = {};
 Session.setDefault('currentGameId',0);
 Session.setDefault('gameUpdated',0);
+Session.setDefault('myTotalEarnings',0);
 
 Tracker.autorun(function(){
     // if a user is on the game screen but there is no current game then ask for the wait screen
     var myUser = Meteor.user();
     if ( myUser && (myuser.screen==='game') && (Session.get('currentGameId')===0) )
-	Meteor.call('requestScreen','wait');
+	Meteor.call('requestScreen', 'wait');
+});
+
+Tracker.autorun(function(){
+    'use strict';
+    var myUserId = Meteor.userId();
+    var unixTimeMS = +Chronos.currentTime();
+    if (myUserId && unixTimeMS){
+	var myTotalEarnings = 0;
+	var i,l;
+	var oldRowGames = Games.find(
+	    {
+		timeEnds: {$lt: unixTimeMS},
+		rowUserId: myUserId
+	    },
+	    { fields: {
+		rowMatrix:1,
+		row:1,
+		col:1
+	    }}
+	).fetch();
+	for(i=0,l=oldRowGames.length; i<l; ++i){
+	    try {
+		myTotalEarnings += oldRowGames[i].rowMatrix[row][col];
+	    } catch(e) {console.log("while summing row game earnings, error:"+e)}
+	}
+	var oldColGames = Games.find(
+	    { 
+		timeEnds: {$lt: unixTimeMS},
+		colUserId: myUserId
+	    },
+	    {
+		fields: {
+		    colMatrix:1,
+		    row:1,
+		    col:1
+		}
+	    }
+	).fetch();
+	for(i=0,l=oldColGames.length; i<l; ++i){
+	    try {
+		myTotalEarnings += oldColGames[i].colMatrix[row][col];
+	    } catch(e) {console.log("while summing col game earnings, error:"+e)}
+	}
+	Session.set('myTotalEarnings',myTotalEarnings);
+    }
 });
 
 Tracker.autorun(function(){

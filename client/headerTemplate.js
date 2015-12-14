@@ -30,6 +30,9 @@ Template.headerTemplate.helpers({
 	if (!myUser) return false;
 	if (!myUser.headerTimerEnds) return false;
 	return ( (myUser.headerTimerEnds+slack) > unixTimeMS );
+    },
+    myTotalEarnings: function(){
+	return Session.get('myTotalEarnings');
     }
 });
 

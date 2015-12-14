@@ -9,6 +9,9 @@
       Timer: {{timeRemaining}} sec
       {{/if}}
       {{#if currentUser}}
+        {{#if myTotalEarnings}}
+          <span id="myTotalEarnings">Earnings: {{myTotalEarnings}}</span>
+	{{/if}}
       <button id="signoffButton">signoff</button>
       {{/if}}
     </p>
