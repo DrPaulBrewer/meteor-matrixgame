@@ -4,8 +4,9 @@ Session.setDefault('currentGameId',0);
 Session.setDefault('gameUpdated',0);
 
 Tracker.autorun(function(){
-    // if there is no current game we need the wait screen
-    if (Session.get('currentGameId')===0)
+    // if a user is on the game screen but there is no current game then ask for the wait screen
+    var myUser = Meteor.user();
+    if ( myUser && (myuser.screen==='game') && (Session.get('currentGameId')===0) )
 	Meteor.call('requestScreen','wait');
 });
 
