@@ -5,7 +5,7 @@ Session.setDefault({
 
 nextGame = {};
 
-var checkGameFile = function(g){
+var checkGameSpec = function(g){
     "use strict";
     var ok = false;
     try {	
@@ -93,8 +93,8 @@ var armFileInput = function(){
 		console.log(e);
 		Session.set('adminGoodCSVFile',false);
 	    } else {
-		// if no error, checkGameFile and set session var for green checkmark in step 1
-		Session.set('adminGoodCSVFile', checkGameFile(nextGame));
+		// if no error, checkGameSpec and set session var for green checkmark in step 1
+		Session.set('adminGoodCSVFile', checkGameSpec(nextGame));
 	    }
 	    // rearm after 1 sec to quell the impatient
 	    Meteor.setTimeout(armFileInput, 1000);
@@ -234,7 +234,7 @@ Template.adminTemplate.events({
 });
 
 Template.adminTemplate.onRendered(function(){
-    Session.set('adminGoodCSVFile', checkGameFile(nextGame));
+    Session.set('adminGoodCSVFile', checkGameSpec(nextGame));
     Session.set('rollcallToggle', false);
     $('#adminGoButton').prop('disabled', true);
     armFileInput();
