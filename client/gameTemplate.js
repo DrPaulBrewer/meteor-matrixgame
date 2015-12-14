@@ -4,6 +4,12 @@ Session.setDefault('currentGameId',0);
 Session.setDefault('gameUpdated',0);
 
 Tracker.autorun(function(){
+    // if there is no current game we need the wait screen
+    if (Session.get('currentGameId')===0)
+	Meteor.call('requestScreen','wait');
+});
+
+Tracker.autorun(function(){
     "use strict;"
     var myUserId = Meteor.userId();
     var unixTimeMS = +Chronos.currentTime();
@@ -23,8 +29,7 @@ Tracker.autorun(function(){
 	    Session.set('currentGameId', myGame._id);
 	} else {
 	    if (Session.get('currentGameId')){ 
-		// game expired or became inactive, ask server for wait screen
-		Meteor.call('requestScreen','wait');
+		// game expired or became inactive
 		Session.set('currentGameId', 0);
 	    }
 	}
