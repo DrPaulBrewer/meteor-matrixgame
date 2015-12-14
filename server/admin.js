@@ -31,8 +31,6 @@ Meteor.publish("adminsecrets", function(){
     
     var allusers = Meteor.users.find({});
     var allgames = Games.find({});
-    var allmatrices = Matrices.find({});
-    var allexperiments = Experiments.find({});
     var rollcall = RollCall.find({});
-    return [allusers, allgames, allmatrices, allexperiments, rollcall];
+    return [allusers, allgames, rollcall];
 });
