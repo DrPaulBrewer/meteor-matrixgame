@@ -8,29 +8,27 @@ Tracker.autorun(function(){
     var myUserId = Meteor.userId();
     var unixTimeMS = +Chronos.currentTime();
     if (myUserId && unixTimeMS){ 
-	if (Games){
-	    var myGame = Games.findOne(
-		{
-		    timeBegins: {$lt: unixTimeMS},
-		    timeEnds: {$gt: unixTimeMS},
-		    $or: [
-			{'rowUserId': myUserId },
-			{'colUserId': myUserId }
-		    ]
-		},
-		{ fields: {_id: 1} }
-	    );
-	    if (myGame){
-		Session.set('currentGameId', myGame._id);
-	    } else {
-		if (Session.get('currentGameId')){ 
-		    // game expired or became inactive, ask server for wait screen
-		    Meteor.call('requestScreen','wait');
-		    Session.set('currentGameId', 0);
-		}
+	var myGame = Games.findOne(
+	    {
+		timeBegins: {$lt: unixTimeMS},
+		timeEnds: {$gt: unixTimeMS},
+		$or: [
+		    {'rowUserId': myUserId },
+		    {'colUserId': myUserId }
+		]
+	    },
+	    { fields: {_id: 1} }
+	);
+	if (myGame){
+	    Session.set('currentGameId', myGame._id);
+	} else {
+	    if (Session.get('currentGameId')){ 
+		// game expired or became inactive, ask server for wait screen
+		Meteor.call('requestScreen','wait');
+		Session.set('currentGameId', 0);
 	    }
-	}				
-    }
+	}
+    }				
 });
 
 Tracker.autorun(function(){
