@@ -11,12 +11,7 @@ var checkUsers = function(claimedId, actualId){
 Meteor.publish('myuserdata', function(claimedUserId){
     checkUsers(claimedUserId, this.userId);
     var userData =  Meteor.users.find({_id: this.userId});
-    var currentExperiment = Experiments.find({'timeEnds': { $gt: +new Date() }}, 
-					     { sort:{'timeBegins':-1}, 
-					       limit:1
-					     });
-    var earnData = Earnings.find({userId: this.userId});
-    return [userData, currentExperiment, earnData];
+    return [userData];
 });
 
 
