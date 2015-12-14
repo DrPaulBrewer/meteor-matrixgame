@@ -8,6 +8,7 @@ nextGame = {};
 var checkGameSpec = function(g){
     "use strict";
     var ok = false;
+    var i;
     try {	
 	ok = ( 
 	    (Match.test(g, gameFileSpec)) &&
@@ -15,12 +16,22 @@ var checkGameSpec = function(g){
 		(g.colnames.length) &&
 		(g.rowMatrix.length === g.colMatrix.length) &&
 		(g.rowMatrix.length === g.rownames.length) &&
-		(g.rowMatrix[0].length === g.colMatrix[0].length) &&
-		(g.rowMatrix[0].length === g.colnames.length) &&
 		( (g.row>=0) && (g.row<g.rownames.length) ) &&
 		( (g.col>=0) && (g.col<g.colnames.length) )
 	);
-    } catch(e) {};
+	i = 0;
+	while( ok && (i<g.colnames.length) ){ 
+	    ok = ( 
+		(g.rowMatrix[i].length === g.colnames.length) &&
+		    (g.colMatrix[i].length === g.colnames.length)
+	    );
+	    ++i;
+	}
+    } catch(e) { 
+	ok = false; 
+	console.log("in checkGameSpec");
+	console.log(e);
+    };
     return ok;
 };
 
@@ -35,8 +46,12 @@ var toNextGame = function(next){
 	col: 0
     }
     var shared = this;
-    if ((!shared) || (!shared.data) || (!shared.data.rows) || (shared.data.rows.length<6) || (shared.data.rows.length>2000) )
-	throw "File REJECTED. This file does not look like a matrix game specification.   The chosen .csv file is missing rows or has too many rows (2000+) and does not seem like a matrix game specification similar to the example file provided.  ";
+    if ( (!shared) || (!shared.data) || (!shared.data.rows) )
+	throw "Read Error:  could not find any data from file. Maybe the file does not exist or is inaccessible.";
+    if (shared.data.rows.length<6) 
+	throw "File REJECTED. Too few rows. Look at the example file provided and make sure all the necessary fields are included.";
+    if (shared.data.rows.length>250)
+	throw "File REJECTED. This file has over 250 rows and is probably not the correct file or in the correct format.";
     var rows = shared.data.rows;
     var i;
     var mode = 'comment';
