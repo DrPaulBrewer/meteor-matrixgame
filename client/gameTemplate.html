@@ -1,6 +1,6 @@
 <template name="gameTemplate">
   <div id="gameHelp"> 
-    <strong>You choose a {{mydim}} </strong>. <strong>They choose a {{otherdim}}</strong>. When time expires, final choices determine earnings. 
+    <strong>You choose a {{mydim}} </strong>. <strong>They choose a {{otherdim}}</strong>. When time expires, these choices determine the outcome added to your earnings.
   </div>
   <hr>
   <div id="gameTableDiv">
@@ -25,10 +25,9 @@
   </div>
   <hr>
   <div id="gameState">
-    <p>Your tentative selection is {{mydim}} {{dimname mychoice mydim}}</p>
-    <p>Their tenative selection is {{otherdim}} {{dimname otherchoice otherdim}}</p>
-    <p>Your tentative earnings is {{mypay}}</p>
-    <p>Their tenative earnings is {{otherpay}}</p>
+    <p>Your choice is {{mydim}} {{dimname mychoice mydim}}</p>
+    <p>Their choice is {{otherdim}} {{dimname otherchoice otherdim}}</p>
+    <p>Potential outcome: {{mypay}} for you and {{otherpay}} for them.
   </div>
-  To change your selection, click a {{mydim}} in the table above.
+  To change your choice: click on a {{mydim}} in the table
 </template>
