@@ -143,6 +143,13 @@ var armFileInput = function(){
     );
 };
 
+Tracker.autorun(function(){
+    'use strict';
+    // only enable the roll call button when there is a known good csv file
+    $('#adminRollCallButton').prop('disabled', 
+				   (!Session.get('adminGoodCSVFile')));
+});
+
 // allGamesTimeEnds is a function to determine when the last currently active game ends
 
 var allGamesTimeEnds = function(){ 
@@ -152,7 +159,6 @@ var allGamesTimeEnds = function(){
     return last.timeEnds;
 };
 	       
-
 Template.adminTemplate.helpers({
     goodFile: function(){ 		     
 	return Session.get('adminGoodCSVFile');
@@ -182,7 +188,7 @@ Template.adminTemplate.helpers({
     },
     rollcallCountdown: function(){ 
 	if (Session.get('rollcallTimeEnds')){ 
-	    return Math.round((Session.get('rollcallTimeEnds')-(+Chronos.currentTime()))/1000);
+	    return Math.max(0,Math.round((Session.get('rollcallTimeEnds')-(+Chronos.currentTime()))/1000));
 	} 
 	return 0;
     },
@@ -209,8 +215,14 @@ var getDurationInputMS = function(jqselector){
 Template.adminTemplate.events({
     'click #adminRollCallButton': function(event, template){
 	'use strict';
+	// choose file first
+	if (!Session.get('adminGoodCSVFile'))
+	    return console.log('no .csv file loaded. must Choose file before running roll call.');
+	// you should not start a roll call with games running
+	if (allGamesTimeEnds()>(+new Date()))
+	    return console.log("While matrix games as still running, you can not start a new roll call. Wait until those games are over or terminate them.");
 	// if you have run a roll call, you need to use it. duplicates are potentially messy.
-	if (Session.get('rollCallToggle')) 
+	if (Session.get('rollcallToggle')) 
 	    return console.log('roll call begun. running a second rollcall is not recommended as this may confuse participants.  To do it anyway, refresh the admin browser window and that will clear the rollcall checkmark on the admin screen');
 	try {
 	    // this next function throws on invalid user input
@@ -239,13 +251,15 @@ Template.adminTemplate.events({
 	'use strict';
 	if (!Session.get('rollcallToggle')) 
 	    return console.log('need to run rollcall before starting next matrix game');
-	// clear rollcallToggle and disable button to avoid multiple GO clicks
-	$('#adminGoButton').prop('disabled',1);
-	Session.get('rollcallToggle', false); 
 	if (Session.get('rollcallTimeEnds') > (+new Date()))
 	    return console.log('need to wait until rollcall ends before starting next matrix game');
 	if (!Session.get('adminGoodCSVFile'))
 	    return console.log('can not GO: need confirmed good .csv file to configfure matrix game');
+	if (RollCall.find({}).count()<2)
+	    return console.log('can not GO: need at least 2 participants');
+	// clear rollcallToggle and disable button to avoid multiple GO clicks
+	$('#adminGoButton').prop('disabled',1);
+	Session.set('rollcallToggle', false); 
 	try {
 	    // this next function throws on invalid user input
 	    var gameDuration = getDurationInputMS('#adminGameDurationInput');

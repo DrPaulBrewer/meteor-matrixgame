@@ -25,17 +25,18 @@
 	{{/if}}
       </li>
       <li>Roll call with <input type="number" id="adminRollCallDurationInput" value="15"> second timer. 
-	Click:<button id="adminRollCallButton" disabled="{{#if gameFinished}}1{{else}}0{{/if}}">Roll Call</button>
-	{{#if rollCallToggle}}
+	Click:<button id="adminRollCallButton">Roll Call</button>
+	{{#if rollcallToggle}}
 	{{ >greenmark }}
 	{{/if}}
+	{{#if rollcallCountdown}}
+	{{rollcallCountdown}} sec
+	{{/if}}
       </li>
-      <li>Wait for participants to finish roll call. 
+      <li>Wait for user response
 	{{#if rollcallToggle}}
   	  {{#if rollcallFinished}}
 	    {{ >greenmark }}
-	  {{else}}
-	    ends in {{ rollcallCountdown }} sec
 	  {{/if}}
 	  {{countUsersByScreen "rollcall"}} twiddling thumbs or absent. 
 	  {{countRollCall}} clicked "Yes I am Present". 
