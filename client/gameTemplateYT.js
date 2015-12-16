@@ -1,2 +1,1 @@
-Template.gameTemplateYT.templateHelpers(G.helpers);
-Template.gameTemplateYT.templateEvents(G.events);
+Template.gameTemplateYT.events(G.templateEvents);

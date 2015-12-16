@@ -11,8 +11,8 @@ header * { font-size: 24px; }
 .green { color: green }
 .red { color: red }
 .greenmark { color: green }
-#adminProcedure { font-size: 14px; }
-#adminProcedure * { font-size: 14px; }
+#adminScreen { font-size: 14px; }
+#adminScreen * { font-size: 14px; }
 #adminRunMatrixList {  }
 #adminGameDurationInput { width: 60px; }
 #adminRollCallDurationInput { width: 40px }

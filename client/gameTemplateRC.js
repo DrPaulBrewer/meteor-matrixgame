@@ -1,2 +1,1 @@
-Template.gameTemplateRC.templateHelpers(G.helpers);
-Template.gameTemplateRC.templateEvents(G.events);
+Template.gameTemplateRC.events(G.templateEvents);

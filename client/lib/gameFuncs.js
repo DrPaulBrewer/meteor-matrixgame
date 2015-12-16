@@ -6,7 +6,7 @@ Session.setDefault('myTotalEarnings',0);
 G = {
     mydim: function(){ 
 	'use strict';
-	if (!myGame) return;    
+	if (myGame === {}) return;    
 	if (Meteor.userId() === myGame.rowUserId) return 'row';
 	if (Meteor.userId() === myGame.colUserId) return 'col';
 	return;
@@ -14,49 +14,49 @@ G = {
 
     otherdim: function(){
 	'use strict';
-	var d = this.mydim();
-	if (d==='row') return 'col';
-	if (d==='col') return 'row';
+	if (myGame === {}) return;    
+	if (Meteor.userId() === myGame.rowUserId) return 'col';
+	if (Meteor.userId() === myGame.colUserId) return 'row';
 	return;
     },
 
     mychoice: function(){
 	'use strict';
-	if (!myGame) return;
+	if (myGame === {}) return;
 	return myGame[this.mydim()];
     },
 
     otherchoice: function(){
 	'use strict';
-	if (!myGame) return;
+	if (myGame === {}) return;
 	return myGame[this.otherdim()];
     },
-    
-    myMatrix: function(){
-	'use strict';
-	var idx = this.mydim()+'Matrix';
-	if (!myGame) return;
-	if (arguments.length===0)
-	    return myGame[idx];
-	return myGame[idx][arguments[0]][arguments[1]];
-    },
 
-    otherMatrix: function(){
+    matrixFunc: function(dim){
 	'use strict';
-	var idx = this.otherdim()+'Matrix';
-	if (!myGame) return;
-	if (arguments.length===0)
-	    return myGame[idx];
-	return myGame[idx][arguments[0]][arguments[1]];	
+	// function factory for matrix functions
+	// dim must be 'row', 'col', or a function() returning 'row' or 'col'
+	return function(){
+	    var adim, prop;
+	    if (myGame === {}) return;
+	    adim = ((typeof(dim) === 'function')? dim(): dim);
+	    if (!adim) return;
+	    prop = adim+'Matrix';
+	    console.log(prop);
+	    console.log(arguments);
+	    if (arguments.length<2)
+		return myGame[prop];
+	    return myGame[prop][arguments[0]][arguments[1]]
+	}
     },
 
     updated: function(func){ 
 	'use strict';
-	// this is a function factory for reactive templates below
+	// this is a function factory for reactive template helpers below
 	return function(){
 	    var args = Array.prototype.slice.call(arguments);
 	    var updated = Session.get('gameUpdated'); 
-	    // throwaway var triggers Reactive updates when game updated
+	    // updated var triggers Reactive updates when game updated
 	    if (typeof(func)==='function')
 		return func.apply({}, args);
 	    // func can be a string
@@ -64,13 +64,18 @@ G = {
 	    if (typeof(G[func])==='function'){
 		return G[func].apply(G, args);
 	    }
-	    if (!myGame) return null;
-	    if ((func in myGame) && (myGame.hasOwnProperty(func)))
+	    if (myGame && (func in myGame) && (myGame.hasOwnProperty(func)))
 		return myGame[func];
 	    return null;
 	}
     }
 };
+
+
+G.myMatrix = G.matrixFunc(G.mydim);
+G.otherMatrix = G.matrixFunc(G.otherdim);
+G.rowMatrix = G.matrixFunc('row');
+G.colMatrix = G.matrixFunc('col');
 
 G.templateHelpers = {
     mydim: G.updated('mydim'),
@@ -88,19 +93,38 @@ G.templateHelpers = {
     },
     mychoice: G.updated('mychoice'),
     otherchoice: G.updated('otherchoice'),
+    row: G.updated('row'),
+    col: G.updated('col'),
     getRowMatrix: G.updated('rowMatrix'),
-    getColNatrix: G.updated('colMatrix'),
+    getColMatrix: G.updated('colMatrix'),
     getMyMatrix: G.updated('myMatrix'), 
     getTheirMatrix: G.updated('otherMatrix'),
-    mypay: G.updated(function(){ return G.myMatrix(myGame.row,myGame.col) }),
-    otherpay: G.updated(function(){ return G.otherMatrix(myGame.row,myGame.col) }),
+    mypay: G.updated(function(){ 
+	return G.myMatrix(myGame.row,myGame.col) 
+    }),
+    otherpay: G.updated(function(){ 
+	return G.otherMatrix(myGame.row,myGame.col) 
+    }),
+    rowpay: G.updated(function(){ 
+	return myGame.rowMatrix[myGame.row][myGame.col] 
+    }),
+    colpay: G.updated(function(){ 
+	return myGame.colMatrix[myGame.row][myGame.col] 
+    }),
     cellstate: G.updated(function(r,c){ 
+	console.log('cellstate',r,c);
 	if ((r===myGame.row) && (c===myGame.col))
 	    return 'highlightCrossing';
 	if (r===myGame.row) return 'highlightRow';
 	if (c===myGame.col) return 'highlightCol';
 	return '';
-    })    
+    }),
+    gameTemplate: G.updated(function(){ 
+	return Template[myGame.gameTemplate]
+    }),
+    cellTemplate: G.updated(function(){
+	return Template[myGame.cellTemplate]
+    })
 };
 
 G.templateEvents = {
@@ -127,4 +151,6 @@ G.templateEvents = {
 	} catch(e) { console.log(event); console.log(template); console.log(e);}
     }
 };
+
+
 

@@ -1,0 +1,22 @@
+<template name="matrixTemplate">
+  <table class="matrix">
+    <tr>
+      <th></th>
+      {{#each cols}}
+        <th class="colNo{{@index}}">Col {{this}}</th>
+      {{/each}}
+    </tr>
+    {{#each rows}}
+      {{#let rowIndex=@index }}
+      <tr class="rowNo{{rowIndex}}">
+      <th class="rowNo{{rowIndex}}">Row {{this}}</th>
+      {{#each cols}}
+          {{#let colIndex = @index }}
+          {{ > cellTemplate rowIndex=rowIndex colIndex=colIndex }}
+          {{/let}}
+      {{/each}}
+      </tr>
+      {{/let}}
+    {{/each}}
+  </table>
+</template>

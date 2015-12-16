@@ -22,7 +22,11 @@ var checkGameSpec = function(g){
 		(g.rowMatrix.length === g.colMatrix.length) &&
 		(g.rowMatrix.length === g.rownames.length) &&
 		( (g.row>=0) && (g.row<g.rownames.length) ) &&
-		( (g.col>=0) && (g.col<g.colnames.length) )
+		( (g.col>=0) && (g.col<g.colnames.length) ) &&
+		(g.gameTemplate in Template) && 
+		(Template.hasOwnProperty(g.gameTemplate)) &&
+		(g.cellTemplate in Template) &&
+		(Template.hasOwnProperty(g.cellTemplate))
 	);
 	i = 0;
 	while( ok && (i<g.colnames.length) ){ 
@@ -55,7 +59,9 @@ var toNextGame = function(){
 	rownames: [],
 	colnames: [],
 	row: 0,
-	col: 0
+	col: 0,
+	gameTemplate: '',
+	cellTemplate: ''
     }
     // examine the number of rows of .csv file data to reject junk
     // 250 rows is plenty for 2 100x100 game matrices and the other settings
@@ -89,6 +95,10 @@ var toNextGame = function(){
 		if ((row.length<2) || (row[1].toString().trim().length===0)) return;
 		// here there is data on this row to add to a property of nextGame
 		switch(mode){
+		    case 'version':
+		    if ((mode===row[0]) && (row[1]!=1))
+			throw "csv file is not version 1, can not read it";
+		    break;
 		case 'rowmatrix':
 		    nextGame.rowMatrix.push(row.slice(1));
 		    break;
@@ -106,6 +116,11 @@ var toNextGame = function(){
 		    break;
 		case 'col':
 		    if (mode===row[0]) nextGame.col = row[1];
+		case 'gametemplate': 
+		    if (mode===row[0]) nextGame.gameTemplate = row[1];
+		    break;
+		case 'celltemplate':
+		    if (mode===row[0]) nextGame.cellTemplate = row[1];
 		case 'comment':
 		    break;
 		default:
@@ -152,7 +167,7 @@ Tracker.autorun(function(){
 
 // allGamesTimeEnds is a function to determine when the last currently active game ends
 
-var allGamesTimeEnds = function(){ 
+allGamesTimeEnds = function(){ 
     "use strict";
     var last =  Games.findOne({}, {fields: {timeEnds: 1}, sort: {timeEnds: -1}});
     if (!last) return 0;
