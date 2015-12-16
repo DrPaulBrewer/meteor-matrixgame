@@ -3,65 +3,7 @@ Session.setDefault('currentGameId',0);
 Session.setDefault('gameUpdated',0);
 Session.setDefault('myTotalEarnings',0);
 
-Tracker.autorun(function(){
-    'use strict';
-    // if a user is on the game screen but there is no current game then ask for the wait screen
-    var myUser = Meteor.user();
-    if ( myUser && (myUser.screen==='game') && (Session.get('currentGameId')===0) )
-	Meteor.call('requestScreen', 'wait');
-});
-
-Tracker.autorun(function(){
-    'use strict';
-    // this Tracker updates a session var for earnings -- the headerTemplate may show this Session var in the header
-    // totalEarnings is defined in /lib and available to both client and server
-    // the + in +Chronos.currentTime() is a conversion from date to unix time in MS, a number
-    var myTotalEarnings = totalEarnings( Meteor.userId(), +Chronos.currentTime() );
-    Session.set('myTotalEarnings', myTotalEarnings);
-});
-
-Tracker.autorun(function(){
-    "use strict;"
-    var myUserId = Meteor.userId();
-    var unixTimeMS = +Chronos.currentTime();
-    if (myUserId && unixTimeMS){ 
-	var myGame = Games.findOne(
-	    {
-		timeBegins: {$lt: unixTimeMS},
-		timeEnds: {$gt: unixTimeMS},
-		$or: [
-		    {'rowUserId': myUserId },
-		    {'colUserId': myUserId }
-		]
-	    },
-	    { fields: {_id: 1} }
-	);
-	if (myGame){
-	    Session.set('currentGameId', myGame._id);
-	} else {
-	    if (Session.get('currentGameId')){ 
-		// game expired or became inactive
-		Session.set('currentGameId', 0);
-	    }
-	}
-    }				
-});
-
-Tracker.autorun(function(){
-    'use strict';
-    var gameId = Session.get('currentGameId');
-    if (gameId){
-	myGame = Games.findOne({_id: gameId});
-	if (Meteor.user().screen!=="game") 
-	    Meteor.call('requestScreen', 'game');
-	Session.set('gameUpdated', +new Date());
-    } else {
-	myGame = {};
-	Session.set('gameUpdated', +new Date());
-    }
-});
-
-var g = {
+G = {
     mydim: function(){ 
 	'use strict';
 	if (!myGame) return;    
@@ -119,8 +61,8 @@ var g = {
 		return func.apply({}, args);
 	    // func can be a string
 	    // if so, it may refer to a method of g, or a property of myGame
-	    if (typeof(g[func])==='function'){
-		return g[func].apply(g, args);
+	    if (typeof(G[func])==='function'){
+		return G[func].apply(G, args);
 	    }
 	    if (!myGame) return null;
 	    if ((func in myGame) && (myGame.hasOwnProperty(func)))
@@ -130,11 +72,11 @@ var g = {
     }
 };
 
-Template.gameTemplate.helpers({
-    mydim: g.updated('mydim'),
-    otherdim: g.updated('otherdim'),
-    cols: g.updated('colnames'),
-    rows: g.updated('rownames'),
+G.templateHelpers = {
+    mydim: G.updated('mydim'),
+    otherdim: G.updated('otherdim'),
+    cols: G.updated('colnames'),
+    rows: G.updated('rownames'),
     dimname: function(index, dimtype){ 
 	Session.get('gameUpdated');
 	if (!myGame) return '';
@@ -144,27 +86,29 @@ Template.gameTemplate.helpers({
 	}
 	return '';
     },
-    mychoice: g.updated('mychoice'),
-    otherchoice: g.updated('otherchoice'),
-    getMyMatrix: g.updated('myMatrix'), 
-    getTheirMatrix: g.updated('otherMatrix'),
-    mypay: g.updated(function(){ return g.myMatrix(myGame.row,myGame.col) }),
-    otherpay: g.updated(function(){ return g.otherMatrix(myGame.row,myGame.col) }),
-    cellstate: g.updated(function(r,c){ 
+    mychoice: G.updated('mychoice'),
+    otherchoice: G.updated('otherchoice'),
+    getRowMatrix: G.updated('rowMatrix'),
+    getColNatrix: G.updated('colMatrix'),
+    getMyMatrix: G.updated('myMatrix'), 
+    getTheirMatrix: G.updated('otherMatrix'),
+    mypay: G.updated(function(){ return G.myMatrix(myGame.row,myGame.col) }),
+    otherpay: G.updated(function(){ return G.otherMatrix(myGame.row,myGame.col) }),
+    cellstate: G.updated(function(r,c){ 
 	if ((r===myGame.row) && (c===myGame.col))
 	    return 'highlightCrossing';
 	if (r===myGame.row) return 'highlightRow';
 	if (c===myGame.col) return 'highlightCol';
 	return '';
     })    
-});
+};
 
-Template.gameTemplate.events({
+G.templateEvents = {
     'click th,td': function(event, template){ 
 	'use strict';
 	var classes, rowNoMatches, colNoMatches, hasRowNo, hasColNo, rowNo, colNo;
 	var newChoice={};
-	var mydim = g.mydim();
+	var mydim = G.mydim();
 	if (Session.get('timer')<=0) return false;
 	try { 
 	    classes = event.currentTarget.className;
@@ -182,5 +126,5 @@ Template.gameTemplate.events({
 	    }
 	} catch(e) { console.log(event); console.log(template); console.log(e);}
     }
-});
+};
 
