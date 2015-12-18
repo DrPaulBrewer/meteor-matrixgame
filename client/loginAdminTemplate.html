@@ -1,17 +1,15 @@
 <template name="loginTemplate">
   <div id="loginDiv">
-    <div id="loginPlease">Please Sign In</div>
+    <div id="loginPlease">Please sign in</div>
     <table id="loginTable">
       <tr>
-	<td><label for="emailInput">Email</label></td>
-	<td><input type="text" id="emailInput"></td>
+	<td><label for="idInput">id</label></td>
+	<td><input type="text" id="idInput"></td>
       </tr>
-      {{#if showPassRow}}
       <tr>
 	<td><label for="passInput">pass</label></td>
 	<td><input type="password" id="passInput"></td>
       </tr>
-      {{/if}}
     </table>
     <button id="loginButton">Sign In</button>
   </div>

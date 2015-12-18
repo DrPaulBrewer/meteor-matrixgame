@@ -1,19 +1,49 @@
+Session.setDefault('showPassRow',false);
+
+Accounts.onLoginFromLink(function(err, response){
+    // this empty function needed to activate poetic:accounts-passwordless
+    // and that will 
+    //
+    // err is a Meteor.Error object
+    // response is a success object in the form of { userId: docId }
+});
+
+Template.loginTemplate.helpers({
+    showPassRow: function(){ 
+	return Session.get('showPassRow');
+    }
+});
+
 Template.loginTemplate.events({
+    'change #emailInput': function(event, template){
+	var email = $('#emailInput').val().toLowerCase().trim();
+	if ( (/^adm/.test(email)) &&
+	     $('#passRow').prop('hidden')
+	   ) $('#passRow').prop('hidden','false');
+    }
+
     'click #loginButton': function(event, template){ 
 	// fetch the id and password from the login form
-	// make id and password input lower case and remove whitespace
-	var id = $('#idInput').val().toLowerCase().trim();
-	var pass = $('#passInput').val().toLowerCase().trim();
-	// sanity check id and password
-	if ((id.length<=0) || (pass.length<=0)) return false;
-	if ((/[^a-zA-Z0-9]/.test(id)) || (/[^a-zA-Z0-9]/.test(pass))) {
-	    console.log("non-alphanumeric characters in id or password");
-	    return false;
+	var email = $('#emailInput').val().trim();
+	var pass  = $('#passInput').val().trim();
+	if (pass && pass!=="undefined"){ 
+	    // attempt login as admin user
+	    // the email field actually contains an admin userid
+	    Meteor.loginWithPassword(email, pass, function(e){ 
+		if (e) console.log(e);
+	    });
+	    return;
 	}
-	// if sane, try to actually login with these
+	// attempt login as user using email/loginToken
+	
+
+
+
 	// and supply an error handling function to create an account if it does not exist
-	Meteor.loginWithPassword(id, pass, function(e){ 
-	    if (e){ 
+
+
+
+
 		// if bad password -- log -- then do nothing
 		if (/password/.test(e.reason)) {
 		    console.log("signin failed");
