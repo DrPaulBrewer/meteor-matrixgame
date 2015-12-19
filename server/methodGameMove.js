@@ -17,6 +17,8 @@ Meteor.methods({
 		throw new Meteor.Error("Forbidden", "unauthorized move by userId "+this.userId+" in game "+gameId);
 	    if ((choiceIndex < 0) || (choiceIndex >= myGame.rownames.length))
 		throw new Meteor.Error("Invalid", "choiceIndex invalid");
+	    if (choiceIndex === myGame.row)
+		return console.log('received duplicate row move from userId: '+this.userId);
 	    var last = [];
 	    last[0] = ts;
 	    last[1] = 0;
@@ -36,6 +38,8 @@ Meteor.methods({
 		throw new Meteor.Error("Forbidden", "unauthorized move by userId "+this.userId+" in game "+gameId);
 	    if ((choiceIndex < 0) || (choiceIndex >= myGame.colnames.length))
 		throw new Meteor.Error("Invalid", "choiceIndex invalid");
+	    if (choiceIndex === myGame.col) 
+		return console.log('received duplicate col move from userid: '+this.userId);
 	    var last = [];
 	    last[0] = ts;
 	    last[1] = 1;

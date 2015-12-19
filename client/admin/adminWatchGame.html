@@ -13,7 +13,7 @@
       <th class="rowNo{{rowIndex}}">Row {{this}}</th>
       {{#each cols}}
           {{#let colIndex = @index }}
-             <td>{{getRowMatrix rowIndex colIndex}},{{getColMatrix rowIndex colIndex}}:{{countMoves rowIndex colIndex}}</td>
+             <td><span class="matrixEarnings">{{getRowMatrix rowIndex colIndex}},{{getColMatrix rowIndex colIndex}}</span>:<span class="matrixCounter">{{countMoves rowIndex colIndex}}</span></td>
           {{/let}}
       {{/each}}
       </tr>

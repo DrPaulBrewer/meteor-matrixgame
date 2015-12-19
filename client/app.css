@@ -1,4 +1,4 @@
-* { font-size: 48px; font-family: sans-serif }
+.body { font-size: 48px; font-family: sans-serif }
 header * { font-size: 24px; }
 #signoffButton { float: right;}
 #loginDiv { width: 600px; }
@@ -11,8 +11,7 @@ header * { font-size: 24px; }
 .green { color: green }
 .red { color: red }
 .greenmark { color: green }
-#adminScreen { font-size: 14px; }
-#adminScreen * { font-size: 14px; }
+.admin { font-size: 14px; }
 #adminRunMatrixList {  }
 #adminGameDurationInput { width: 60px; }
 #adminRollCallDurationInput { width: 40px }

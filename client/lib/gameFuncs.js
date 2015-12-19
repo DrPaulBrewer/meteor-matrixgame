@@ -42,8 +42,6 @@ G = {
 	    adim = ((typeof(dim) === 'function')? dim(): dim);
 	    if (!adim) return;
 	    prop = adim+'Matrix';
-	    console.log(prop);
-	    console.log(arguments);
 	    if (arguments.length<2)
 		return myGame[prop];
 	    return myGame[prop][arguments[0]][arguments[1]]
@@ -145,7 +143,8 @@ G.templateEvents = {
 	    if (hasRowNo) newChoice.row = rowNo;
 	    if (hasColNo) newChoice.col = colNo;
 	    if (mydim in newChoice){ 
-//	Meteor.call('gameMove', Session.get('currentGameId'), mydim, mychoice);
+		if (myGame[mydim] === newChoice[mydim])
+		    return console.log('repeated click on previous choice. ignored. not sent to server');
 		Meteor.call('gameMove', Session.get('currentGameId'), mydim, newChoice[mydim]);
 	    }
 	} catch(e) { console.log(event); console.log(template); console.log(e);}
