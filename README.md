@@ -10,12 +10,14 @@ It is written using the Meteor Javascript framework.
 
 ##Prerequisites:
 
-Linux server with Meteor and git installed.
+ * Linux server with [Meteor](https://install.meteor.com) and git installed.
+
+ * various devices with web browsers for the human participants. An android smartphone's chrome web browser might be OK.  
 
 ##Usage
 
-WARNING: This is a rough draft under development and testing. There are missing pieces dealing with closing down the experiment and getting a list
-of payments to be made.  As is it is useful for comment and testing.
+WARNING: This is a rough draft under development and testing. There are missing pieces dealing with closing down the experiment and getting a list of payments to be made.  As is it is only useful for comment and testing.  Automated
+tests currently indicate that there are throttling issues with more than ~ 20-40 participants.  
 
 It creates a "cheap talk" version of a normal form matrix game where moves are visible, but future versions will be able to vary the information conditions
 so that games where the moves are invisible or visible by only one side of the game. 
@@ -73,6 +75,20 @@ delete existing data or log out participants.  Instead a red warning message is 
  in this way, but are stored with each game record and would need to be aggregated.  A "finish the experiment" screen for the admin
  will be released in a forthcoming update.
 
+# Automated testing with random robots
+
+The danger with software intended for many people to use simultaneously is that it works fine when only a few people are around, but eventually fails under heavier loads.  
+
+If you have a computer with [Docker](https://docs.docker.com/engine/installation/) installed, you can create, say, 50 robotic participants to randomly make choices every 5 seconds in matrixgame as follows:
+
+    docker run -e url=http://your.matrixgames.address:port -e bots=50 -e deltat=5000 drpaulbrewer/matrixgame-test:latest
+    
+ * `-e url=` sets the game url that the robots should contact. You **must** replace the url shown above with your matrixgame's url.
+ * `-e bots=` sets the number of robot participants. You can change it to suit your needs.
+ * `-e deltat=` sets the click interval in milliseconds.  You can change this too.
+ * `drpaulbrewer/matrixgame-test:latest` identifes the Docker image on Dockerhub to be download and run.  This should not be changed.
+ 
+You should have matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots.  The robots and the matrixgame do not need can run on different computers or the same computer.  Effects of network load are only tested if the robots run on a different computer from the matrixgame server.
 
 ##News
 -----
