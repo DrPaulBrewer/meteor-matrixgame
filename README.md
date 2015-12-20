@@ -88,7 +88,7 @@ If you have a computer with [Docker](https://docs.docker.com/engine/installation
  * `-e deltat=` sets the click interval in milliseconds.  You can change this too.
  * `drpaulbrewer/matrixgame-test:latest` identifes the Docker image on Dockerhub to be download and run.  This should not be changed.
  
-You should have matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots.  The robots and the matrixgame do not need can run on different computers or the same computer.  Effects of network load are only tested if the robots run on a different computer from the matrixgame server.
+You should have matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots.  The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
 
 ##News
 -----
