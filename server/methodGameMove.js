@@ -19,6 +19,10 @@ Meteor.methods({
 		throw new Meteor.Error("Invalid", "choiceIndex invalid");
 	    if (choiceIndex === myGame.row)
 		return console.log('received duplicate row move from userId: '+this.userId);
+	    if ( myGame.timeRow && myGame.timeThrottle && (ts < (myGame.timeRow+myGame.timeThrottle))){
+		console.log('throttled rapid movement by userid: '+this.userId);
+		throw new Meteor.Error("Throttled","Do not click so fast");
+	    }
 	    var last = [];
 	    last[0] = ts;
 	    last[1] = 0;
@@ -40,6 +44,10 @@ Meteor.methods({
 		throw new Meteor.Error("Invalid", "choiceIndex invalid");
 	    if (choiceIndex === myGame.col) 
 		return console.log('received duplicate col move from userid: '+this.userId);
+	    if ( myGame.timeCol && myGame.timeThrottle && (ts < (myGame.timeCol+myGame.timeThrottle))){
+		console.log('throttled rapid movement by userid: '+this.userId);
+		throw new Meteor.Error("Throttled","Do not click so fast. Server ignores moves faster than "+myGame.timeThrottle+" ms");
+	    }
 	    var last = [];
 	    last[0] = ts;
 	    last[1] = 1;

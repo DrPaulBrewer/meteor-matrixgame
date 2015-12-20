@@ -128,6 +128,10 @@ G.templateHelpers = {
 var myPreviousClick;
 var myPreviousClickMS;
 
+var capitalFirst = function(s){
+    return s.charAt(0).toUpperCase()+s.slice(1);
+};
+
 G.templateEvents = {
     'click th,td': function(event, template){ 
 	'use strict';
@@ -135,6 +139,9 @@ G.templateEvents = {
 	var newChoice={};
 	var mydim = G.mydim();
 	if ((+new Date())>myGame.timeEnds) return false;
+	if ( (myGame.timeThrottle) &&
+	     ( (+new Date()) < myGame['time'+capitalFirst(mydim)]+myGame.timeThrottle ) )
+	    return console.log("rapid click ignored. clicks allowed every "+myGame.timeThrottle+" ms");		
 	try { 
 	    classes = event.currentTarget.className;
 	    rowNoMatches = classes.match(/rowNo(\d+)/);
