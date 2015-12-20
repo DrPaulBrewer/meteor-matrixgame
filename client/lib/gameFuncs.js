@@ -125,13 +125,16 @@ G.templateHelpers = {
     })
 };
 
+var myPreviousClick;
+var myPreviousClickMS;
+
 G.templateEvents = {
     'click th,td': function(event, template){ 
 	'use strict';
 	var classes, rowNoMatches, colNoMatches, hasRowNo, hasColNo, rowNo, colNo;
 	var newChoice={};
 	var mydim = G.mydim();
-	if (Session.get('timer')<=0) return false;
+	if ((+new Date())>myGame.timeEnds) return false;
 	try { 
 	    classes = event.currentTarget.className;
 	    rowNoMatches = classes.match(/rowNo(\d+)/);
@@ -144,8 +147,12 @@ G.templateEvents = {
 	    if (hasColNo) newChoice.col = colNo;
 	    if (mydim in newChoice){ 
 		if (myGame[mydim] === newChoice[mydim])
-		    return console.log('repeated click on previous choice. ignored. not sent to server');
+		    return console.log('repeated click on server-acknowledged previous choice. ignored. not sent to server');
+		if ((myPreviousClick === newChoice[mydim]) && (myPreviousClickMS > (+new Date() - 2000)))
+		    return console.log('repeated click on unacknowledged previous choice within a time of two seconds. ignored. not sent to server'); 
 		Meteor.call('gameMove', Session.get('currentGameId'), mydim, newChoice[mydim]);
+		myPreviousClick = newChoice[mydim];
+		myPreviousClickMS = +new Date();
 	    }
 	} catch(e) { console.log(event); console.log(template); console.log(e);}
     }
