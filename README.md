@@ -88,7 +88,7 @@ If you have a computer with [Docker](https://docs.docker.com/engine/installation
  * `-e deltat=` sets the click interval in milliseconds.  You can change this too.
  * `drpaulbrewer/matrixgame-test:latest` identifes the Docker image on Dockerhub to be download and run.  This should not be changed.
  
-You should have matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots.  The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
+You should have matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots. Then, start the robots.  Then, use your web browser to sign in to matrixgame as an admin and set up a matrix and roll call as you normally would.  The robots will already have logged in and be at the wait screen.  When you run the roll call they will see the button and push it.  When you start the game they will click randomly. The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
 
 ##News
 -----
