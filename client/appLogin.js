@@ -3,9 +3,9 @@ Tracker.autorun(function(){
 	var userAdminData = Meteor.users.findOne({_id: Meteor.userId(), isAdmin:1}, {fields: {isAdmin: 1}});
 	if (userAdminData && userAdminData.isAdmin){
 	    // login for admin
-	    console.log("requesting adminsecrets subscription");
+	    console.log("requesting admin data subscription");
 	    // note: unauthorized calls are rejected on the server side
-	    Meteor.subscribe("adminsecrets");
+	    Meteor.subscribe("adminMinimal");
 	} else {
 	    // login for user
 	    Meteor.subscribe('myuserdata', Meteor.userId());

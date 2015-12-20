@@ -19,18 +19,28 @@ Meteor.startup(function(){
     Meteor.users.update({_id: adminId}, {$set: {isAdmin: 1 }});
 });
 
-// define adminsecrets as pretty much everything
+// define adminFull as pretty much everything
 
-Meteor.publish("adminsecrets", function(){ 
+Meteor.publish("adminFull", function(){ 
     "use strict;"
-    if (this.userId !== adminId){
-	return this.error(
-	    new Meteor.Error("Forbidden","non-admin client attempted to subscribe to adminsecrets")
-	);
-    }
+    if (this.userId !== adminId) return;
     
     var allusers = Meteor.users.find({});
     var allgames = Games.find({});
     var rollcall = RollCall.find({});
     return [allusers, allgames, rollcall];
 });
+
+// define adminMinimal as omitting game move stack, but keeping current move
+
+Meteor.publish("adminMinimal", function(){
+    "use strict";
+    if (this.userId !== adminId) return;
+    
+    var allusers = Meteor.users.find({});
+    var allgames = Games.find({}, {fields: {moves: 0}});
+    var rollcall = RollCall.find({});
+    return [allusers, allgames, rollcall];
+});
+
+    
