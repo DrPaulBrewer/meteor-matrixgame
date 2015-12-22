@@ -28,18 +28,18 @@ and in a local mongo database included with meteor. All row/col choices are time
 
 1. get the software onto the server using a terminal window
 
-    git clone https://github.com/DrPaulBrewer/matrixgame
+    git clone https://github.com/DrPaulBrewer/meteor-matrixgame
 
  to update an unmodified copy of the software to the latest version
 
-    cd matrixgame 
+    cd meteor-matrixgame 
     git pull 
 
  The software may run on the server as an ordinary user and does not require root priviledges.
 
 2. run the software on the server
 
-    cd matrixgame
+    cd meteor-matrixgame
     meteor run 
 
  Please note that the server may report the web address when the software starts.  
@@ -88,7 +88,7 @@ If you have a computer with [Docker](https://docs.docker.com/engine/installation
  * `-e deltat=` sets the click interval in milliseconds.  You can change this too.
  * `drpaulbrewer/matrixgame-test:latest` identifes the Docker image on Dockerhub to be download and run.  This should not be changed.
  
-You should have matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots. Then, start the robots.  Then, use your web browser to sign in to matrixgame as an admin and set up a matrix and roll call as you normally would.  The robots will already have logged in and be at the wait screen.  When you run the roll call they will see the button and push it.  When you start the game they will click randomly. The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
+You should have meteor-matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots. Then, start the robots.  Then, use your web browser to sign in to matrixgame as an admin and set up a matrix and roll call as you normally would.  The robots will already have logged in and be at the wait screen.  When you run the roll call they will see the button and push it.  When you start the game they will click randomly. The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
 
 ##News
 -----
