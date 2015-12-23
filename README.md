@@ -28,19 +28,19 @@ and in a local mongo database included with meteor. All row/col choices are time
 
 1. get the software onto the server using a terminal window
 
-    git clone https://github.com/DrPaulBrewer/meteor-matrixgame
+         git clone https://github.com/DrPaulBrewer/meteor-matrixgame
 
  to update an unmodified copy of the software to the latest version
 
-    cd meteor-matrixgame 
-    git pull 
+         cd meteor-matrixgame 
+         git pull 
 
  The software may run on the server as an ordinary user and does not require root priviledges.
 
 2. run the software on the server
 
-    cd meteor-matrixgame
-    meteor run 
+         cd meteor-matrixgame
+         meteor run 
 
  Please note that the server may report the web address when the software starts.  
 
