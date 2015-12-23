@@ -18,14 +18,14 @@ Meteor.publish('myuserdata', function(claimedUserId){
 Meteor.publish('myrowgamedata', function(claimedUserId){
     checkUsers(claimedUserId, this.userId);
     var gameData = Games.find({visible: true, rowUserId: this.userId},
-			      {fields: { 'colUserId': 0 }});
+			      {fields: { colUserId: 0, moves:0 }});
     return gameData;
 });
 
 Meteor.publish('mycolgamedata', function(claimedUserId){
     checkUsers(claimedUserId, this.userId);
     var gameData = Games.find({visible: true, colUserId: this.userId},
-			      {fields: { 'rowUserId': 0 }});
+			      {fields: { rowUserId: 0, moves:0 }});
     return gameData;
 });
 

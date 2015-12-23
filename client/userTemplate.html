@@ -1,4 +1,5 @@
 <template name="userTemplate">
+<div class="user">
   {{#if screenIs "wait"}}
   {{ >waitTemplate}}
   {{/if}}
@@ -11,4 +12,5 @@
   {{#if screenIs "done"}}
   {{ >doneTemplate }}
   {{/if}}
+</div>
 </template>

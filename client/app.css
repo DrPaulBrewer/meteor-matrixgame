@@ -1,17 +1,19 @@
-.body { font-size: 48px; font-family: sans-serif }
-header * { font-size: 24px; }
+.user { font-size: 48px; font-family: sans-serif }
+header * { font-size: 32px; }
+#readyButton {font-size: 48px; }
 #signoffButton { float: right;}
 #loginDiv { width: 600px; }
+#loginDiv * { font-size: 48px; font-family: sans-serif }
 #loginButton { height: 2em; width: 100%; }
 #loginTable { width: 100%; }
 #loginTable input { height: 2em; width: 100%; }
-.highlightCrossing { background-color: #ccffcc; font-size: 36px; }
+.highlightCrossing { background-color: #ccffcc; font-size: 48px; }
 .highlightRow { background-color: #ccffff; }
 .highlightCol { background-color: #ffffcc; }
 .green { color: green }
 .red { color: red }
 .greenmark { color: green }
-.admin { font-size: 14px; }
+.admin { font-size: 24px; }
 #adminRunMatrixList {  }
 #adminGameDurationInput { width: 60px; }
 #adminRollCallDurationInput { width: 40px }

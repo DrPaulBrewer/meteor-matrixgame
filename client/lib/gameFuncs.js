@@ -110,7 +110,6 @@ G.templateHelpers = {
 	return myGame.colMatrix[myGame.row][myGame.col] 
     }),
     cellstate: G.updated(function(r,c){ 
-	console.log('cellstate',r,c);
 	if ((r===myGame.row) && (c===myGame.col))
 	    return 'highlightCrossing';
 	if (r===myGame.row) return 'highlightRow';
