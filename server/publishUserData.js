@@ -29,7 +29,11 @@ Meteor.publish('mycolgamedata', function(claimedUserId){
     return gameData;
 });
 
-
+Meteor.startup(function(){
+    Games._ensureIndex({colUserId:1});
+    Games._ensureIndex({rowUserId:1});
+    Games._ensureIndex({timeEnds:1});
+});
     
     
 

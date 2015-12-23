@@ -80,7 +80,7 @@ Meteor.methods({
 	}
 	for(i=0; i<numpairs; ++i){ 
 	    thisGame = Object.assign({},
-				     {timeThrottle: 1000 },
+				     {timeThrottle: 5000 },
 				     gameFactory,
 				     {rowUserId: pairs[i][0],
 				      colUserId: pairs[i][1]

@@ -26,9 +26,9 @@ Meteor.publish("adminFull", function(){
     if (this.userId !== adminId) return;
     
     var allusers = Meteor.users.find({});
-    var allgames = Games.find({});
+    var games = Games.find({});
     var rollcall = RollCall.find({});
-    return [allusers, allgames, rollcall];
+    return [allusers, rollcall];
 });
 
 // define adminMinimal as omitting game move stack, but keeping current move
@@ -38,9 +38,38 @@ Meteor.publish("adminMinimal", function(){
     if (this.userId !== adminId) return;
     
     var allusers = Meteor.users.find({});
-    var allgames = Games.find({}, {fields: {moves: 0}});
     var rollcall = RollCall.find({});
-    return [allusers, allgames, rollcall];
+    return [allusers, rollcall];
+});
+
+Meteor.methods({
+    strategyCounts: function(timeEnds){
+	if (this.userId !== adminId) return;
+	var aggPipeline = [
+	    { $match: {timeEnds: timeEnds} },
+	    { $project: { rowcol: { $concat: [
+		{ $substr: ["$row", 0, 3] },
+		  ",",
+		{ $substr: ["$col", 0, 3] }
+	    ] } , _id:0 } },
+	    { $sort: {rowcol: 1}},
+	    { $group: { _id: "$rowcol", count: { $sum: 1 } } }
+	];
+	return Games.aggregate(aggPipeline);
+    },
+
+    gamesAggregate: function(pipeline){
+	if (this.userId !== adminId) return;
+	return Games.aggregate(pipeline);
+    },
+    
+    allGamesTimeEnds: function(after){
+	"use strict";
+	var last = Games.findOne({timeEnds: {$gt: after}}, {fields: {timeEnds:1}, sort: {timeEnds: -1}});
+	if (!last) return 0;
+	return last.timeEnds;
+    }
+    
 });
 
     

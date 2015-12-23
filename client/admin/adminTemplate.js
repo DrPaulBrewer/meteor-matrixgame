@@ -1,9 +1,11 @@
 Session.setDefault({
     rollcallToggle: false,
-    rollcallTimeEnds: 0
+    rollcallTimeEnds: 0,
+    allGamesTimeEnds: 0
 });
 
 nextGame = {};
+countEnds = 0;
 
 // checkGameSpec(g) checks that the game in g is valid as to
 //   the gameFileSpec in /lib/gameFactorySpec and that the
@@ -62,7 +64,7 @@ var toNextGame = function(){
 	col: 0,
 	gameTemplate: '',
 	cellTemplate: ''
-    }
+    };
     // examine the number of rows of .csv file data to reject junk
     // 250 rows is plenty for 2 100x100 game matrices and the other settings
     // if the data has more rows than that something is wrong
@@ -84,8 +86,14 @@ var toNextGame = function(){
 	needRowLog = true;
     // mode will be used to track col 1 csv value, ignoring blank cell
     var mode = 'comment';
+    var keys = Object.keys(nextGame);
+    var keyMap = {};
+    keys.forEach(function(k){
+	keyMap[k.toLowerCase()] = k;
+    });
     rows.forEach(function(row){
 	"use strict";
+	var k;
 	try {
 	    if (row && row.length){
 		if (needRowLog) console.log(row.join(","));
@@ -93,42 +101,26 @@ var toNextGame = function(){
 		// data should always be on or begin on the 2nd col cell so
 		// if the 2nd col cell (which is row[1]) is blank then ignore the row
 		if ((row.length<2) || (row[1].toString().trim().length===0)) return;
-		// here there is data on this row to add to a property of nextGame
-		switch(mode){
-		    case 'version':
-		    if ((mode===row[0]) && (row[1]!=1))
-			throw "csv file is not version 1, can not read it";
-		    break;
-		case 'rowmatrix':
-		    nextGame.rowMatrix.push(row.slice(1));
-		    break;
-		case 'colmatrix':
-		    nextGame.colMatrix.push(row.slice(1));
-		    break;
-		case 'rownames':
-		    if (mode===row[0]) nextGame.rownames = row.slice(1);
-		    break;
-		case 'colnames':
-		    if (mode===row[0]) nextGame.colnames = row.slice(1);
-		    break;
-		case 'row':
-		    if (mode===row[0]) nextGame.row = row[1];
-		    break;
-		case 'col':
-		    if (mode===row[0]) nextGame.col = row[1];
-		case 'gametemplate': 
-		    if (mode===row[0]) nextGame.gameTemplate = row[1];
-		    break;
-		case 'celltemplate':
-		    if (mode===row[0]) nextGame.cellTemplate = row[1];
-		case 'comment':
-		    break;
-		default:
-		    console.log('.csv file, ignored row: '+mode);
-		    break;
+		// here there is data on this row to possibly add to a property of nextGame
+		// check that mode is in the lowercased keys of nextGame and identify correct case key as k
+		k = keyMap[mode];
+		if(!k) return;
+		// key exists 
+		//if a matrix add the remainder of the row to the matrix and return
+		if (/matrix$/.test(mode)){
+		    nextGame[k].push(row.slice(1));
+		    return;
 		}
+		// not a matrix,  check that mode name matches first cell
+		if (mode!==row[0]) return;
+		// if an array, copy the remainder of the row. otherwise, copy 1 cell.
+		if (nextGame[k] instanceof Array)
+		    nextGame[k]=row.slice(1);
+		else
+		    nextGame[k]=row[1];
 	    }
-	} catch(e) {console.log(e)};
+	} 
+	catch(e) { console.log(e);}
     });
 };
 
@@ -158,22 +150,13 @@ var armFileInput = function(){
     );
 };
 
-Tracker.autorun(function(){
-    'use strict';
-    // only enable the roll call button when there is a known good csv file
-    $('#adminRollCallButton').prop('disabled', 
-				   (!Session.get('adminGoodCSVFile')));
-});
-
-// allGamesTimeEnds is a function to determine when the last currently active game ends
-
-allGamesTimeEnds = function(){ 
-    "use strict";
-    var last =  Games.findOne({}, {fields: {timeEnds: 1}, sort: {timeEnds: -1}});
-    if (!last) return 0;
-    return last.timeEnds;
+var updateEnds = function(){
+    ++countEnds;
+    Meteor.call('allGamesTimeEnds', Session.get('allGamesTimeEnds'), function(e,d){
+	if (d && (+d>Session.get('allGamesTimeEnds'))) Session.set('allGamesTimeEnds', +d);
+    });
 };
-	       
+
 Template.adminTemplate.helpers({
     goodFile: function(){ 		     
 	return Session.get('adminGoodCSVFile');
@@ -185,10 +168,10 @@ Template.adminTemplate.helpers({
 	return Meteor.users.find({strikes: {$gt: 0}}).count();
     },
     gameFinished: function(){ 
-	return (allGamesTimeEnds() < +Chronos.currentTime());
+	return (Session.get('allGamesTimeEnds') < +Chronos.currentTime());
     },
     lastGameCountdown: function(){
-	var t = Math.round( (allGamesTimeEnds() - (+Chronos.currentTime())) / 1000);
+	var t = Math.round( (Session.get('allGamesTimeEnds') - (+Chronos.currentTime())) / 1000);
 	if (t<0) return 0;
 	return t;
     },
@@ -234,7 +217,7 @@ Template.adminTemplate.events({
 	if (!Session.get('adminGoodCSVFile'))
 	    return console.log('no .csv file loaded. must Choose file before running roll call.');
 	// you should not start a roll call with games running
-	if (allGamesTimeEnds()>(+new Date()))
+	if (Session.get('allGamesTimeEnds')>(+new Date()))
 	    return console.log("While matrix games as still running, you can not start a new roll call. Wait until those games are over or terminate them.");
 	// if you have run a roll call, you need to use it. duplicates are potentially messy.
 	if (Session.get('rollcallToggle')) 
@@ -292,10 +275,10 @@ Template.adminTemplate.events({
 		timeEnds: now+gameDuration+slackMS,
 	    };
 	    // assemble the game from various variables into var gameFactory
-	    var gameFactory = Object.assign({}, nextGame, gameTimer, initGame);
+	    myGame = Object.assign({}, nextGame, gameTimer, initGame);
 	    // tell the server to call the pairRollBeginExperiment function that
 	    // makes multiple games from gameFactory to pairs of participants randomly pulled from roll call
-	    Meteor.call('pairRollBeginExperiment', gameFactory, function(e){
+	    Meteor.call('pairRollBeginExperiment', myGame, function(e){
 		if (e){
 		    // there was an error running the server call to start the experiment
 		    console.log(e); 
@@ -307,7 +290,11 @@ Template.adminTemplate.events({
 		    // The GO button was disabled earlier. make the admin run another roll call.
 		    // end the previous rollcall and increment baseball strikes
 		    Meteor.call('endRollCall', function(e){ if (e) console.log(e); });
+		    // in 1 second update time Ends 
+		    Meteor.setTimeout(updateEnds, 1000);
+		    Session.set('gameUpdated', +new Date());
 		}
+
 	    });
 	} catch(e){ console.log(e); }
     }
@@ -323,4 +310,13 @@ Template.adminTemplate.onRendered(function(){
     Session.set('rollcallToggle', false);
     $('#adminGoButton').prop('disabled', true);
     armFileInput();
+    Meteor.setInterval(updateEnds, 10000);
+
+    Tracker.autorun(function(){
+	'use strict';
+	// only enable the roll call button when there is a known good csv file
+	$('#adminRollCallButton').prop('disabled', 
+				       (!Session.get('adminGoodCSVFile')));
+    });
+
 });
