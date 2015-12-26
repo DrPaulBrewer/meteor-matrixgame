@@ -1,3 +1,5 @@
+/* globals Games */
+
 Meteor.methods({
     gameMove: function(gameId, dim, choiceIndex){
 	var ts = +new Date();
@@ -28,7 +30,7 @@ Meteor.methods({
 			      moves: [ts,0,choiceIndex]
 			  }
 			 }, 
-			 function(e,d){});
+			 function(){});
 	} 
 	if (dim==='col'){
 	    if (myGame.colUserId!==this.userId)
@@ -47,7 +49,7 @@ Meteor.methods({
 			  $push: {
 			      moves: [ts, 1, choiceIndex]
 			  }
-			 }, function(e,d){} );
+			 }, function(){} );
 	}
     }
 });

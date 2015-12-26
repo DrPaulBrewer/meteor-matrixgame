@@ -1,6 +1,8 @@
+/* globals Games,RollCall,adminId,gameFactorySpec */
+
 Meteor.methods({
     startRollCall:function(timerEnds){
-	"use strict;"
+	"use strict";
 	check(timerEnds, Number);
 	if (this.userId !== adminId)
 	    throw new Meteor.Error("Forbidden","only admin can call this function");
@@ -18,7 +20,7 @@ Meteor.methods({
     },
 
     endRollCall: function(){
-	"use strict;"
+	"use strict";
 	// Note: this function does not delete the contents of RollCall, see startRollCall for that
 	// puts all users still on rollcall screen back onto wait screen, clears headerTimer, and adds Strike
 	if (this.userId !== adminId)
@@ -33,7 +35,7 @@ Meteor.methods({
     },
 
     clickReadyButton: function(){
-	"use strict;"
+	"use strict";
 	// move clicking user from rollcall screen to wait screen and reset user strikes to 0
 	if (this.userId){
 	    Meteor.users.update(
@@ -51,7 +53,7 @@ Meteor.methods({
     },
 
     pairRollBeginExperiment: function(gameFactory){
-	"use strict;"
+	"use strict";
 	// pull random pairs of users from RollCall and assign them a new matrix game
 	// Games are constructed from the gameFactory parameter 
 	if (this.userId !== adminId)
@@ -59,7 +61,7 @@ Meteor.methods({
 	check(gameFactory, Match.ObjectIncluding(gameFactorySpec));
 	var roll = (RollCall
 		    .find({})
-		    .map(function(x){ return x.userId })
+		    .map(function(x){ return x.userId; })
 		    );
 	var pairs = [];
 	var thisPair = [];

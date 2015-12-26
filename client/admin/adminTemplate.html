@@ -1,56 +1,8 @@
 <template name="adminTemplate">
 <div id="adminScreen" class="admin">
-  <p>To prepare matrices:
-  <ol>
-    <li>Make a copy of the 
-      <a href="https://docs.google.com/spreadsheets/d/1SqSKCbG3XhAwCfxmyZay0JVAsDgMZsbHc6jjTej6tCk/edit?usp=sharing" target="_blank">Prisoners Dilemma Example</a> 
-      and modify it to fit your needs. In Google Sheets menu, click "File"->"Make a Copy".</li>
-    <li>Save each matrix onto your hard disk as a separate .csv file. Only .csv files are acceptable. In Google Sheets menu, click "File"->"Download as"->"Comma-separated values (.csv, current sheet) ". </li>
-    <li><em>Important</em>: Remember to <em>repeat</em> the previous step for <em>each matrix</em>. Put the .csv files into a folder or thumbdrive that you can <em>easily</em> find during the experiment. </li>
-  </ol>
-  </p>
-  <p>To run a matrix game:
-    <ol id="adminRunMatrixList">
-      <li><input type="file" id="adminFileInput"> 
-	{{#if goodFile}}
-	{{ >greenmark }}
-	{{/if}}
-      </li>
-      <li>Finish previous matrix:
-	{{#if gameFinished}}
-	{{ >greenmark }}
-	Up to {{countUsersByScreen "wait"}} users now waiting on <em>you</em> (including {{countUsersWithStrikes}} inactive). 
-        {{else}}
-        game ends in {{lastGameCountdown}} sec
-	{{/if}}
-      </li>
-      <li>Roll call with <input type="number" id="adminRollCallDurationInput" value="15"> second timer. 
-	Click:<button id="adminRollCallButton">Roll Call</button>
-	{{#if rollcallToggle}}
-	{{ >greenmark }}
-	{{/if}}
-	{{#if rollcallCountdown}}
-	{{rollcallCountdown}} sec
-	{{/if}}
-      </li>
-      <li>Wait for user response
-	{{#if rollcallToggle}}
-  	  {{#if rollcallFinished}}
-	    {{ >greenmark }}
-	  {{/if}}
-	  {{countUsersByScreen "rollcall"}} twiddling thumbs or absent. 
-	  {{countRollCall}} clicked "Yes I am Present". 
-        {{/if}}
-      </li>
-      <li>Set matrix game duration: <input type="number" id="adminGameDurationInput" value="600"> seconds</li>
-      <li><button id="adminGoButton">GO</button>
-	{{#if lastGameCountdown}}
-	{{>greenmark}} {{countUsersByScreen "game"}} active
-	{{/if}}
-      </li>
-    </ol>
-  </p>
-<hr>
-{{ > adminWatchGame }}
+  {{ > adminPrep }}
+  {{ > adminRun }}
+  {{ > adminWatchGame }}
+  {{ > adminDangerZone }}
 </div>
 </template>

@@ -1,0 +1,43 @@
+<template name="adminRun">
+  <p>To run a matrix game:
+    <ol id="adminRunMatrixList">
+      <li><input type="file" id="adminFileInput"> 
+	{{#if Admin.goodFile}}
+	{{ >greenmark }}
+	{{/if}}
+      </li>
+      <li>Finish previous matrix:
+	{{#if Admin.gameFinished}}
+	{{ >greenmark }}
+	Up to {{Admin.countUsersByScreen "wait"}} users now waiting on <em>you</em> (including {{Admin.countUsersWithStrikes}} inactive). 
+        {{else}}
+        game ends in {{Admin.lastGameCountdown}} sec
+	{{/if}}
+      </li>
+      <li>Roll call with <input type="number" id="adminRollCallDurationInput" value="15"> second timer. 
+	Click:<button id="adminRollCallButton">Roll Call</button>
+	{{#if Admin.rollcallToggle}}
+	{{ >greenmark }}
+	{{/if}}
+	{{#if Admin.rollcallCountdown}}
+	{{Admin.rollcallCountdown}} sec
+	{{/if}}
+      </li>
+      <li>Wait for user response
+	{{#if Admin.rollcallToggle}}
+  	{{#if Admin.rollcallFinished}}
+	{{ >greenmark }}
+	{{/if}}
+	{{Admin.countUsersByScreen "rollcall"}} twiddling thumbs or absent. 
+	{{Admin.countRollCall}} clicked "Yes I am Present". 
+        {{/if}}
+      </li>
+      <li>Set matrix game duration: <input type="number" id="adminGameDurationInput" value="600"> seconds</li>
+      <li><button id="adminGoButton">GO</button>
+	{{#if Admin.lastGameCountdown}}
+	{{>greenmark}} {{Admin.countUsersByScreen "game"}} active
+	{{/if}}
+      </li>
+    </ol>
+  </p>
+</template>

@@ -1,5 +1,5 @@
 Template.loginTemplate.events({
-    'click #loginButton': function(event, template){ 
+    'click #loginButton': function(){ 
 	// fetch the id and password from the login form
 	// make id and password input lower case and remove whitespace
 	var id = $('#idInput').val().toLowerCase().trim();
@@ -22,20 +22,20 @@ Template.loginTemplate.events({
 		}
 		// if nonexistent account -- ask user if he wants to make account and make if needed
 		if (/not found/.test(e.reason)){
-		    if (confirm("Create new id "+id+" ?")){ 
+		    if (window.confirm("Create new id "+id+" ?")){ 
 			Accounts.createUser({'username': id,
-					     'password': pass,
-					     function(e){ 
-						 if (e) {
-						     console.log("create user failed: ");
-						     console.log(e);
-						 }
-						 else {
-						     console.log("created user "+id);
-						     
-						 }
-					     }
-					     });
+					     'password': pass
+					    },
+					    function(e){ 
+						if (e) {
+						    console.log("create user failed: ");
+						    console.log(e);
+						}
+						else {
+						    console.log("created user "+id);			     
+						}
+					    }
+					   );
 		    } else {
 			console.log("user cancelled new account creation");
 		    }

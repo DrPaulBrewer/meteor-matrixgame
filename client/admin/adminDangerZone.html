@@ -1,0 +1,24 @@
+<template name="adminDangerZone">
+<div id="adminDangerZone">
+  <hr>
+  <h2 class="red">Danger Zone</h2>
+  <ul>
+    <li>
+      <button id="adminAbortButton" class="red">Abort Games</button> 
+      Aborts active games, sending participants back to wait screen.  No payments are recorded for the aborted game.  
+    </li>
+    <li>
+      <button id="adminDoneButton" class="red">Finish Experiment</button>
+      Finishes experiment.  Sends all participants to "Done" screen.  
+    </li>
+    <li>
+      <button id="adminResetDatabaseButton" class="red">Reset Database</button>
+      Deletes all games and earnings, keeps userids / passwords.  Resets all users to "wait" screen.
+    </li>
+    <li>
+      <button id="adminDeleteDatabaseButton" class="red">Delete Database</button>
+      Deletes all user ids, passwords, games, payments, etc. 
+    </li>
+  </ul>
+</div>
+</template>

@@ -1,5 +1,5 @@
 Template.rollcallTemplate.events({
-    'click #readyButton': function(event, template){ 
+    'click #readyButton': function(){ 
 	Meteor.call('clickReadyButton');
     }
 });

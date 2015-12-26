@@ -37,9 +37,9 @@ Template.headerTemplate.helpers({
 });
 
 Template.headerTemplate.events({
-    'click #signoffButton': function(event, template){ 
-	if (confirm("Confirm signoff")){ 
-	    Meteor.logout(function(e){ console.log('signoff by user'); });
+    'click #signoffButton': function(){ 
+	if (window.confirm("Confirm signoff")){ 
+	    Meteor.logout(function(){ console.log('signoff by user'); });
 	}
     }
 });

@@ -1,9 +1,15 @@
+/* globals totalEarnings, Games, myGame */
+
 Tracker.autorun(function(){
     'use strict';
-    // if a user is on the game screen but there is no current game then ask for the wait screen
+    // if a user is on the game screen but there is no current game then
+    // wait 2 seconds to increase confidence and if still an issue ask for the wait screen
     var myUser = Meteor.user();
     if ( myUser && (myUser.screen==='game') && (Session.get('currentGameId')===0) )
-	Meteor.call('requestScreen', 'wait');
+	Meteor.setTimeout(function(){
+	    if ( (Meteor.user().screen==='game') && (Session.get('currentGameId')===0) )
+		Meteor.call('requestScreen', 'wait');
+	}, 2000);	    
 });
 
 Tracker.autorun(function(){
@@ -16,7 +22,7 @@ Tracker.autorun(function(){
 });
 
 Tracker.autorun(function(){
-    "use strict;"
+    "use strict";
     var myUserId = Meteor.userId();
     var unixTimeMS = +Chronos.currentTime();
     if (myUserId && unixTimeMS){ 
@@ -50,7 +56,8 @@ Tracker.autorun(function(){
     // when Session var currentGameId changes, set global myGame to the game object
     // and keep myGame updated with any database changes.
     // if the users screen is not the game screen, request the game screen
-    // finally, put a timeStamp in Session var 'gameUpdated' 
+    // finally, put a timeStamp in Session var 'gameUpdated'
+    /* globals myGame:true */
     var gameId = Session.get('currentGameId');
     if (gameId){
 	myGame = Games.findOne({_id: gameId});

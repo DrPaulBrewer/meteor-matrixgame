@@ -1,11 +1,13 @@
 // claimedUserId is (and should be) ignored in favor of the users actual id in this.userId
 // it is checked and a Meteor.Error thrown to help track any odd bugs around logging in
 
+/* globals Games */
+
 var checkUsers = function(claimedId, actualId){ 
     if (claimedId !== actualId)
 	throw new Meteor.Error('Forbidden', 'blocked: user claiming to be '+claimedId+' actually '+actualId);
     return true;
-}
+};
     
 
 Meteor.publish('myuserdata', function(claimedUserId){

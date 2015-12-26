@@ -1,8 +1,9 @@
-lastBatchOfGames = [];
-countStrategyCounts = 0;
-adminGameWatcher = 0;
+/* globals myGame */
 
-adminWatch = Tracker.autorun(function(){
+var countStrategyCounts = 0;
+var adminGameWatcher = 0;
+
+Tracker.autorun(function(){
     var myUser = Meteor.user();
     if (!myUser || !myUser.isAdmin) return;
     if (!adminGameWatcher)
@@ -14,7 +15,7 @@ adminWatch = Tracker.autorun(function(){
 		    for(r=0;r<myGame.rownames.length; r++)
 			for(c=0; c<myGame.colnames.length; c++)
 			    Session.set('watcher'+r+','+c, 0);
-		    } catch(e) {};
+		    } catch(e) {}
 		    data.forEach(function(x){
 			Session.set('watcher'+x._id, x.count);
 		    });

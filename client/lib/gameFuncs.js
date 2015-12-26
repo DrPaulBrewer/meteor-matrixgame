@@ -1,3 +1,5 @@
+/* globals myGame:true,G:true */
+
 myGame = {};
 Session.setDefault('currentGameId',0);
 Session.setDefault('gameUpdated',0);
@@ -44,8 +46,8 @@ G = {
 	    prop = adim+'Matrix';
 	    if (arguments.length<2)
 		return myGame[prop];
-	    return myGame[prop][arguments[0]][arguments[1]]
-	}
+	    return myGame[prop][arguments[0]][arguments[1]];
+	};
     },
 
     updated: function(func){ 
@@ -53,7 +55,9 @@ G = {
 	// this is a function factory for reactive template helpers below
 	return function(){
 	    var args = Array.prototype.slice.call(arguments);
-	    var updated = Session.get('gameUpdated'); 
+	    /* tell jshint to ignore that updated is defined but never used */
+	    /* jshint unused:false */
+	    var updated = Session.get('gameUpdated');
 	    // updated var triggers Reactive updates when game updated
 	    if (typeof(func)==='function')
 		return func.apply({}, args);
@@ -65,7 +69,7 @@ G = {
 	    if (myGame && (func in myGame) && (myGame.hasOwnProperty(func)))
 		return myGame[func];
 	    return null;
-	}
+	};
     }
 };
 
@@ -98,16 +102,16 @@ G.templateHelpers = {
     getMyMatrix: G.updated('myMatrix'), 
     getTheirMatrix: G.updated('otherMatrix'),
     mypay: G.updated(function(){ 
-	return G.myMatrix(myGame.row,myGame.col) 
+	return G.myMatrix(myGame.row,myGame.col);
     }),
     otherpay: G.updated(function(){ 
-	return G.otherMatrix(myGame.row,myGame.col) 
+	return G.otherMatrix(myGame.row,myGame.col);
     }),
     rowpay: G.updated(function(){ 
-	return myGame.rowMatrix[myGame.row][myGame.col] 
+	return myGame.rowMatrix[myGame.row][myGame.col]; 
     }),
     colpay: G.updated(function(){ 
-	return myGame.colMatrix[myGame.row][myGame.col] 
+	return myGame.colMatrix[myGame.row][myGame.col];
     }),
     cellstate: G.updated(function(r,c){ 
 	if ((r===myGame.row) && (c===myGame.col))
@@ -117,10 +121,10 @@ G.templateHelpers = {
 	return '';
     }),
     gameTemplate: G.updated(function(){ 
-	return Template[myGame.gameTemplate]
+	return Template[myGame.gameTemplate];
     }),
     cellTemplate: G.updated(function(){
-	return Template[myGame.cellTemplate]
+	return Template[myGame.cellTemplate];
     })
 };
 
