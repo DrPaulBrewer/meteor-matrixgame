@@ -39,6 +39,12 @@ Template.headerTemplate.helpers({
 Template.headerTemplate.events({
     'click #signoffButton': function(){ 
 	if (window.confirm("Confirm signoff")){ 
+	    Meteor.users.update(Meteor.userId(), 
+				{ 
+				    $set: {
+					'profile.outAt': +new Date()
+				    }
+				});
 	    Meteor.logout(function(){ console.log('signoff by user'); });
 	}
     }

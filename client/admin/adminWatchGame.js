@@ -5,7 +5,7 @@ var adminGameWatcher = 0;
 
 Tracker.autorun(function(){
     var myUser = Meteor.user();
-    if (!myUser || !myUser.isAdmin) return;
+    if (!myUser || myUser.username!=='adm') return;
     if (!adminGameWatcher)
 	adminGameWatcher = Meteor.setInterval(function(){
 	    if (Session.get('allGamesTimeEnds')){

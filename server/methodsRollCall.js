@@ -1,4 +1,8 @@
-/* globals Games,RollCall,adminId,gameFactorySpec */
+/* globals Games,RollCall,adminId,gameFactorySpec,postGameEarnings */
+
+/* globals gameCache:true */
+
+gameCache = {};
 
 Meteor.methods({
     startRollCall:function(timerEnds){
@@ -9,8 +13,8 @@ Meteor.methods({
 	if (timerEnds > ( +new Date() ) ){ 
 	    // delete the records of the previous RollCall
 	    RollCall.remove({});
-	    // put all users assigned to some screen onto rollcall screen
-	    Meteor.users.update({'screen': {$exists: true}},
+	    // put all participants with some screen onto rollcall screen
+	    Meteor.users.update({'screen': {$exists: true, $ne: 'admin'}},
 				{ $set: {screen: 'rollcall',
 					 headerTimerEnds: timerEnds}
 				},
@@ -68,6 +72,7 @@ Meteor.methods({
 	var numpairs = Math.floor(roll.length/2);
 	var j = 0; 
 	var k = 0;
+	var l = 0;
 	var thisGame = {};
 	for(var i=0; i<numpairs; ++i){ 
 	    j = Math.floor(Random.fraction()*roll.length);
@@ -88,6 +93,7 @@ Meteor.methods({
 				      colUserId: pairs[i][1]
 				     });
 	    Games.insert(thisGame);
+	    
 	    for(j=0; j<2; ++j){ 
 		Meteor.users.update({_id: pairs[i][j]},
 				    {$set: {'screen': 'game',
@@ -96,6 +102,11 @@ Meteor.methods({
 				    });
 	    }
 	}
+	Meteor.setTimeout(postGameEarnings, (3000+gameFactory.timeEnds-(+new Date())));
+	var gameList = Games.find({timeEnds: thisGame.timeEnds},{fields:{moves:0}}).fetch();
+	gameCache = {};
+	for(i=0,l=gameList.length;i<l;++i)
+	    gameCache[gameList[i]._id] = gameList[i];
     }
 });
 

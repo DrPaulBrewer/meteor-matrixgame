@@ -98,3 +98,32 @@ Template.adminRun.events({
 	} catch(e){ console.log(e); }
     }
 });
+// Template...onRendered is called on admin screen refresh or new admin login
+//    set the good .csv checkmark based on the goodness of existing data
+//    clear the good roll call checkmark
+//    disable the GO button until the file is loaded and/or rollcall run
+
+var lastRendered = 0;
+
+Template.adminRun.onRendered(function(){
+    if (!this.custom){ 
+	this.custom = true;
+	var ts = +new Date();
+	var diffts = ts - lastRendered;
+	lastRendered = ts;
+	if (diffts<1000)
+	    return console.log('rapidly calling Template.adminRun.onRendered');
+	Session.set('adminGoodCSVFile', Admin.checkGameSpec(nextGame));
+	Session.set('rollcallToggle', false);
+	$('#adminGoButton').prop('disabled', true);
+	Admin.armFileInput();
+	Meteor.setInterval(Admin.updateEnds, 10000);
+	
+	Tracker.autorun(function(){
+	    'use strict';
+	    // only enable the roll call button when there is a known good csv file
+	    $('#adminRollCallButton').prop('disabled', 
+					   (!Session.get('adminGoodCSVFile')));
+	});
+    }
+});

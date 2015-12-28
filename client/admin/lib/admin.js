@@ -209,13 +209,9 @@ Admin.getDurationInputMS = function(jqselector){
 };
 
 Admin.login = function(){ 
-    var myUser = Meteor.user();
-    if (!myUser || !myUser.isAdmin) return;
-    // login for admin
-    console.log("requesting admin data subscription");
     // note: unauthorized calls are rejected on the server side
     Meteor.subscribe("adminMinimal");
 };
 
-Meteor.registerHelper('Admin', Admin);
+Template.registerHelper('Admin', Admin.helpers);
 

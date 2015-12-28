@@ -5,13 +5,9 @@
   {{ >headerTemplate }}
   <hr>
   {{#if currentUser}}
-    {{#if currentUser.isAdmin}}
-     {{>adminTemplate}}
-    {{else}}
-     {{>userTemplate}}
-    {{/if}}
+  {{>userTemplate}}
   {{else}}
-    {{>loginTemplate}}
+  {{>loginTemplate}}
   {{/if}}
   <hr>
   {{ >footerTemplate }}

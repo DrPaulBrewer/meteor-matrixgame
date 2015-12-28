@@ -6,21 +6,30 @@
 
 adminId=0;
 
+var createAdmin = function(){
+    var password = process.env.password;
+    if (!password){
+	password = 'adm';
+    }
+    console.log('adm password: '+password);
+    var id = Accounts.createUser({username: 'adm'});
+    if (!id) throw new Meteor.Error("Fatal","Unable to create adm id");
+    Accounts.setPassword(id, password);
+    Meteor.users.update(id, {$set: {screen: 'admin'}});    
+    return id;
+};
+
 Meteor.startup(function(){
     "use strict";
     // adminId is an intentional global exported from here
     //    for use in server-side publish functions later
     var adminUser = Accounts.findUserByUsername('adm');
-    if (!adminUser){
-	console.log("creating new adm user");
-	adminId = Accounts.createUser({username: 'adm'});
-    } else {
+    if (adminUser && adminUser._id){
 	adminId = adminUser._id;
+	Meteor.users.update(adminId, {$set: {screen: 'admin'}});    
+    } else {
+	adminId = createAdmin();
     }
-    if (!adminId) console.log("Error: cant find or create adm id");
-    check(adminId, String);
-    Accounts.setPassword(adminId, 'adm', {logout: true});
-    Meteor.users.update({_id: adminId}, {$set: {isAdmin: 1 }});
 });
 
 // define adminFull as pretty much everything
@@ -29,7 +38,7 @@ Meteor.publish("adminFull", function(){
     "use strict";
     if (this.userId !== adminId) return;
     
-    var allusers = Meteor.users.find({});
+    var allusers = Meteor.users.find({}, {fields: {services:0}});
     var games = Games.find({});
     var rollcall = RollCall.find({});
     return [allusers, games, rollcall];
@@ -39,9 +48,8 @@ Meteor.publish("adminFull", function(){
 
 Meteor.publish("adminMinimal", function(){
     "use strict";
-    if (this.userId !== adminId) return;
-    
-    var allusers = Meteor.users.find({});
+    if (this.userId !== adminId) return;    
+    var allusers = Meteor.users.find({}, {fields: {services: 0}});
     var rollcall = RollCall.find({});
     return [allusers, rollcall];
 });
@@ -76,13 +84,14 @@ Meteor.methods({
 
     adminAbortGame: function(timeEnds){
 	var ts = +new Date();
+	if (this.userId !== adminId) return;
 	Games.update({
 	    timeEnds: timeEnds
-	},{
+	},{ $set: {
 	    timeEnds: ts,
 	    timeEndsOriginal: timeEnds,
 	    aborted: 1
-	},{
+	}},{
 	    multi: 1
 	});
 	return ts;
@@ -92,7 +101,8 @@ Meteor.methods({
 	if (this.userId !== adminId) return;
 	var thisGame;
 	var theseGames = Games.find({
-	    'timeEnds': timeEnds
+	    timeEnds: timeEnds,
+	    aborted: {$exists: false}
 	},{
 	    fields: {
 		row: 1,
@@ -109,37 +119,29 @@ Meteor.methods({
 	return sum;
     },
     
-    adminSetEarnings: function(timeEnds, zeroEarnings){
+    adminFinishExperiment: function(){
 	if (this.userId !== adminId) return;
-	if (timeEnds > +new Date())
-	    throw new Meteor.Error("Invalid","Please wait until this game ends before setting earnings");
-	var theseGames = Games.find({
-	    timeEnds: timeEnds
-	},{
-	    fields: {
-		_id: 1,
-		row: 1,
-		col: 1,
-		rowMatrix: 1,
-		colMatrix: 1
-	    }
-	}).fetch();	    
-	theseGames.forEach(function(thisGame){
-	    if ((zeroEarnings===true) || (zeroEarnings===1)){
-		Games.update(thisGame._id, {
-		    rowEarn: 0,
-		    colEarn: 0
-		});
-	    } else {
-		Games.update(thisGame._id, {
-		    rowEarn: thisGame.rowMatrix[thisGame.row][thisGame.col],
-		    colEarn: thisGame.colMatrix[thisGame.row][thisGame.col]
-		});
-	    }
-	});
+	Meteor.users.update({screen: {$ne: 'admin'}},
+			     {$set: { screen: 'done'}}, 
+			     {multi:true});
+    },
+
+    adminResetDatabase: function(){
+	if (this.userId !== adminId) return;
+	Games.remove({});
+	Meteor.users.update({screen: {$ne: 'admin'}},
+			    {$set: { screen: 'wait'}}, 
+			    {multi:true});
+	
+    },
+
+    adminDeleteDatabase: function(){
+	if (this.userId !== adminId) return;
+	Games.remove({});
+	Meteor.users.remove({});
+	createAdmin();
     }
-    
-    
+
 });
 
     

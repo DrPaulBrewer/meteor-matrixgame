@@ -12,7 +12,8 @@ var checkUsers = function(claimedId, actualId){
 
 Meteor.publish('myuserdata', function(claimedUserId){
     checkUsers(claimedUserId, this.userId);
-    var userData =  Meteor.users.find({_id: this.userId});
+    var userData =  Meteor.users.find({_id: this.userId},
+				     {fields: { services: 0 }});
     return [userData];
 });
 
