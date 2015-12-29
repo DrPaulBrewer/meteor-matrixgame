@@ -1,5 +1,5 @@
 /* globals Games,gameCache */
-/* updateLag:true */
+/* globals updateLag:true */
 
 updateLag = 0;
 
