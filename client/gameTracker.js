@@ -60,7 +60,7 @@ Tracker.autorun(function(){
     /* globals myGame:true */
     var gameId = Session.get('currentGameId');
     if (gameId){
-	myGame = Games.findOne({_id: gameId});
+	myGame = Games.findOne(gameId);
 	if (Meteor.user().screen!=="game") 
 	    Meteor.call('requestScreen', 'game');
     } else {
