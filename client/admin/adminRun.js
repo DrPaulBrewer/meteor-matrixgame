@@ -64,7 +64,6 @@ Template.adminRun.events({
 	    var slackMS = 2000;
 	    // every game needs these properties
 	    var initGame = {
-		visible: true,
 		moves: []
 	    };
 	    // game also needs a begin and end time
