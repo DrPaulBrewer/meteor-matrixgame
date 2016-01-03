@@ -13,7 +13,5 @@ header * { font-size: 32px; }
 .green { color: green }
 .red { color: red }
 .greenmark { color: green }
-.admin { font-size: 24px; }
-#adminRunMatrixList {  }
-#adminGameDurationInput { width: 60px; }
-#adminRollCallDurationInput { width: 40px }
+ul.nobullets { list-style-type: None; }
+

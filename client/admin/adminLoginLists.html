@@ -1,0 +1,34 @@
+<template name="adminLoginLists">
+  <hr>
+  <div id="adminLoginLists">
+    <p>
+    |<input type="radio" name="sortby" value="createdAt">new
+    |<input type="radio" name="sortby" value="profile.inAt">in
+    |<input type="radio" name="sortby" value="profile.outAt">out
+    | limit: <input type="number" id="adminLoginListLimit" value="10">
+    </p>
+    <table>
+      <thead>
+	<tr>
+	  <th>username</th>
+	  <th>email</th>
+	  <th>createdAt</th>
+	  <th>inAt</th>
+	  <th>outAt</th>
+	  <th>rollcall strikes</th>
+	</tr>
+      </thead>
+      <tbody id='adminLoginTableBody'>
+	{{#each sortedUsers}}
+	<tr>
+	  <td>{{#if username}}{{username}}{{/if}}</td>
+	  <td>{{#each emails}}{{address}} {{/each}}</td>
+	  <td>{{#if createdAt}}{{mydate createdAt}}{{/if}}</td>
+	  <td>{{#if profile.inAt}}{{mydate profile.inAt}}{{/if}}</td>
+	  <td>{{#if profile.outAt}}{{mydate profile.outAt}}{{/if}}</td>
+	</tr>
+	{{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>

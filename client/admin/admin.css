@@ -1,2 +1,7 @@
+.admin { font-size: 24px; }
 span.matrixCounter { font-size: 36px; }
 #adminDangerZone ul { list-style-type: None; }
+#adminRunMatrixList {  }
+#adminGameDurationInput { width: 60px; }
+#adminRollCallDurationInput { width: 40px }
+#adminLoginTableBody { height: 200px; width: 100%; overflow-y: auto }
