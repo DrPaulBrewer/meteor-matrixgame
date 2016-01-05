@@ -1,23 +1,25 @@
 <template name="adminWatchGame">
-  Batch of Games {{#if allGamesTimeEnds}}ending: {{allGamesTimeEnds}}{{/if}}
-  <table class="matrix">
-    <tr>
-      <th></th>
-      {{#each cols}}
+  <div>
+    Batch of Games {{#if allGamesTimeEnds}}ending: {{allGamesTimeEnds}}{{/if}}
+    <table class="matrix">
+      <tr>
+	<th></th>
+	{{#each cols}}
         <th class="colNo{{@index}}">Col {{this}}</th>
-      {{/each}}
-    </tr>
-    {{#each rows}}
+	{{/each}}
+      </tr>
+      {{#each rows}}
       {{#let rowIndex=@index }}
       <tr class="rowNo{{rowIndex}}">
-      <th class="rowNo{{rowIndex}}">Row {{this}}</th>
-      {{#each cols}}
-          {{#let colIndex = @index }}
-             <td><span class="matrixEarnings">{{getRowMatrix rowIndex colIndex}},{{getColMatrix rowIndex colIndex}}</span>:<span class="matrixCounter">{{countMoves rowIndex colIndex}}</span></td>
-          {{/let}}
-      {{/each}}
+	<th class="rowNo{{rowIndex}}">Row {{this}}</th>
+	{{#each cols}}
+        {{#let colIndex = @index }}
+        <td><span class="matrixEarnings">{{getRowMatrix rowIndex colIndex}},{{getColMatrix rowIndex colIndex}}</span>:<span class="matrixCounter">{{countMoves rowIndex colIndex}}</span></td>
+        {{/let}}
+	{{/each}}
       </tr>
       {{/let}}
-    {{/each}}
-  </table>
+      {{/each}}
+    </table>
+  </div>
 </template>

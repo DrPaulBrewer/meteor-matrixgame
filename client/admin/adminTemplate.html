@@ -1,9 +1,16 @@
 <template name="adminTemplate">
+<div id="adminMenu">
+<ul class="nobullets" id="adminMenuList">
+<li>{{gt "help"}}</li>
+<li>{{gt "run"}}</li>
+<li>{{gt "watch"}}</li>
+<li>{{gt "users"}}</li>
+<li>{{gt "cleanup"}}</li>
+</ul>
+</div>
 <div id="adminScreen" class="admin">
-  {{ > adminPrep }}
-  {{ > adminRun }}
-  {{ > adminWatchGame }}
-  {{ > adminDangerZone }}
-  {{ > adminLoginLists }}
+  {{ > adminScreen }}
+</div>
+<div class="clear">
 </div>
 </template>

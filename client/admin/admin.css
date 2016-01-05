@@ -4,4 +4,12 @@ span.matrixCounter { font-size: 36px; }
 #adminRunMatrixList {  }
 #adminGameDurationInput { width: 60px; }
 #adminRollCallDurationInput { width: 40px }
-#adminLoginTableBody { height: 200px; width: 100%; overflow-y: auto }
+#adminLoginLists table { width: 100% }
+#adminLoginLists th,td { padding: 10px; text-align:right; }
+#adminMenu { width: 250px; float: left; background-color: yellow; }
+#adminScreen { margin-left: 250px;  }
+#adminMenuList li {color: blue; text-decoration: underline; }
+div.clear { clear: both; }
+#adminLoginListLimit { font-size: 18px; width: 90px; }
+#adminRollCallButton { font-size: 18px; }
+#adminGoButton { font-size: 18px; }

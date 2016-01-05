@@ -14,6 +14,10 @@ Template.headerTemplate.helpers({
 	    return 'green';
 	return 'red';
     },
+    lag: function(){
+	var rtt = (TimeSync.roundTripTime()/1000).toString().substr(0,7);
+	return rtt+'/'+Session.get('updatelag');
+    },
     timeRemaining: function(){
 	var myUser = Meteor.user();
 	var unixTimeMS = +Chronos.currentTime();

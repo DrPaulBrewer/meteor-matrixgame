@@ -5,7 +5,6 @@
 # but you can also edit it by hand.
 
 meteor-base             # Packages every Meteor app needs to have
-mobile-experience       # Packages for a great mobile UX
 mongo                   # The database Meteor supports right now
 blaze-html-templates    # Compile .html files into Meteor Blaze views
 session                 # Client-side reactive dictionary for your app
@@ -18,10 +17,11 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 accounts-password
 check
-osv:mongo-counter
 remcoder:chronos
 random
 eaftc:html5csv
 meteorhacks:aggregate
 jshint
 momentjs:moment
+mizzao:user-status
+mizzao:timesync

@@ -1,5 +1,10 @@
 /* globals Admin */
 
+
+
+
+Session.setDefault('updatelag',0);
+
 Accounts.onLogin(function(){
     var myUser = Meteor.user();
     if (!myUser) return;
@@ -19,6 +24,11 @@ Accounts.onLogin(function(){
 				'profile.inAt': +new Date() 
 			    }
 			});
+    Meteor.setInterval(function(){ TimeSync.resync();
+				   Meteor.call('getLag',function(e,d){
+				       if (d) Session.set('updatelag',(d/1000).toString().substr(0,5));
+				   });
+				 }, 30000);
 });
 
 

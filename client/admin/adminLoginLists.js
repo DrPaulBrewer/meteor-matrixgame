@@ -1,5 +1,7 @@
 Session.setDefault('adminLoginListSortField','profile.inAt');
-Session.setDefault('adminLoginListLimit',30);
+
+// if you change the list size limit below, you should change it in the HTML template input box too.
+Session.setDefault('adminLoginListLimit',10);
 
 Template.adminLoginLists.helpers({
     sortedUsers: function(){
@@ -14,8 +16,9 @@ Template.adminLoginLists.helpers({
 	return Meteor.users.find({},findOptions).fetch();
     },
     mydate: function(d){
-	return moment(d).calendar();
-    }
+	return  moment(d).calendar().replace('Today at','');
+    },
+    userCount: function(){ return Meteor.users.find({}).count(); }
 });
 
 Template.adminLoginLists.events({

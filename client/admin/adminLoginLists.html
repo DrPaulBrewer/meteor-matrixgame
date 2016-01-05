@@ -1,31 +1,38 @@
 <template name="adminLoginLists">
-  <hr>
   <div id="adminLoginLists">
     <p>
     |<input type="radio" name="sortby" value="createdAt">new
     |<input type="radio" name="sortby" value="profile.inAt">in
     |<input type="radio" name="sortby" value="profile.outAt">out
-    | limit: <input type="number" id="adminLoginListLimit" value="10">
+    |<input type="radio" name="sortby" value="status.lastLogin.ipAddr">ip
+    | limit: <input type="number" id="adminLoginListLimit" value="10"> of {{userCount}}
     </p>
-    <table>
+    <table border="1">
       <thead>
 	<tr>
 	  <th>username</th>
 	  <th>email</th>
 	  <th>createdAt</th>
 	  <th>inAt</th>
+	  <th>ip address</th>
+	  <th>online</th>
 	  <th>outAt</th>
-	  <th>rollcall strikes</th>
+	  <th>missed rollcalls</th>
 	</tr>
       </thead>
-      <tbody id='adminLoginTableBody'>
+      <tbody>
 	{{#each sortedUsers}}
 	<tr>
 	  <td>{{#if username}}{{username}}{{/if}}</td>
 	  <td>{{#each emails}}{{address}} {{/each}}</td>
 	  <td>{{#if createdAt}}{{mydate createdAt}}{{/if}}</td>
 	  <td>{{#if profile.inAt}}{{mydate profile.inAt}}{{/if}}</td>
+	  <td>{{#if status}}{{status.lastLogin.ipAddr}}{{/if}}</td>
+	  <td>{{#if status}}{{#if status.online}}{{>greenmark}}{{/if}}{{#if status.idle}}idle{{/if}}
+	    {{/if}}
+	  </td>
 	  <td>{{#if profile.outAt}}{{mydate profile.outAt}}{{/if}}</td>
+	  <td>{{#if strikes}}{{strikes}}{{/if}}</td>
 	</tr>
 	{{/each}}
       </tbody>

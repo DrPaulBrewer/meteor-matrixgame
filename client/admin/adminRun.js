@@ -106,8 +106,8 @@ Template.adminRun.onRendered(function(){
     if (!this.custom){ 
 	this.custom = true;
 	Session.set('adminGoodCSVFile', Admin.checkGameSpec(nextGame));
-	Session.set('rollcallToggle', false);
-	$('#adminGoButton').prop('disabled', true);
+	Session.setDefault('rollcallToggle', false);
+	$('#adminGoButton').prop('disabled', !(Session.get('rollcallToggle') && Session.get('adminGoodCSVFile')));
 	Admin.armFileInput();
 	Meteor.setInterval(Admin.updateEnds, 10000);
 	
