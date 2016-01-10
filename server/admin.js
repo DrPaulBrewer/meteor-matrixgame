@@ -98,7 +98,7 @@ Meteor.methods({
 	    screen: 'game'
 	}, { 
 	    $set:{ 
-		headerTimeEnds: 0,
+		headerTimerEnds: 0,
 		screen: 'wait'
 	    }},{
 		multi:1
