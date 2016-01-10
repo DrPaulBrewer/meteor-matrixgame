@@ -155,7 +155,7 @@ Admin.armFileInput = function(){
 
 Admin.updateEnds = function(){
     Meteor.call('allGamesTimeEnds', Session.get('allGamesTimeEnds'), function(e,d){
-	if (d && (+d>Session.get('allGamesTimeEnds'))) Session.set('allGamesTimeEnds', +d);
+	Session.set('allGamesTimeEnds', +d);
     });
 };
 
