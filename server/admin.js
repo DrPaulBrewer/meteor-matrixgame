@@ -94,6 +94,15 @@ Meteor.methods({
 	}},{
 	    multi: 1
 	});
+	Meteor.users.update({
+	    screen: 'game'
+	}, { 
+	    $set:{ 
+		headerTimeEnds: 0,
+		screen: 'wait'
+	    }},{
+		multi:1
+	});
 	return ts;
     },
 
