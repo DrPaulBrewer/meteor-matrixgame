@@ -18,6 +18,7 @@
 	  <th>online</th>
 	  <th>outAt</th>
 	  <th>missed rollcalls</th>
+	  <th>total earnings</th>
 	</tr>
       </thead>
       <tbody>
@@ -33,6 +34,7 @@
 	  </td>
 	  <td>{{#if profile.outAt}}{{mydate profile.outAt}}{{/if}}</td>
 	  <td>{{#if strikes}}{{strikes}}{{/if}}</td>
+	  <td>{{#if earnings}}{{earnings}}{{/if}}</td>
 	</tr>
 	{{/each}}
       </tbody>
