@@ -88,6 +88,14 @@ If you have a computer with [Docker](https://docs.docker.com/engine/installation
  
 You should have meteor-matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots. Then, start the robots.  Then, use your web browser to sign in to matrixgame as an admin and set up a matrix and roll call as you normally would.  The robots will already have logged in and be at the wait screen.  When you run the roll call they will see the button and push it.  When you start the game they will click randomly. The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
 
+##Contributing
+
+July 2016 - This software is not currently under active development. 
+
+You are obviosly welcome to fork it and do your own thing, as consistent with the MIT License.
+
+Pull requests will be accepted that advance the software's utility for teaching or experiments in game theory.
+
 ##Copyright
 
 2015- Paul Brewer, Economic and Financial Technology Consulting LLC
