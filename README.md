@@ -1,10 +1,6 @@
 #meteor-matrixgame 
 
-##Copyright 2015- Dr Paul Brewer Economic and Financial Technology Consulting LLC http://eaftc.com
-
-##License: You are welcome to fork and copy this software as free code available under the MIT License.
-
-This software creates Game Theory experiments for a group of human participants.  
+Rough prototype of software to create cheap-talk (visible move) 2-person matrix game experiments for a group of participants
 
 It is written using the Meteor Javascript framework.
 
@@ -16,15 +12,17 @@ It is written using the Meteor Javascript framework.
 
 ##Usage
 
-WARNING: This is a rough draft under development and testing. There are missing pieces dealing with closing down the experiment and getting a list of payments to be made.  As is it is only useful for comment and testing.  Automated
-tests currently indicate that there are throttling issues with more than ~ 20-40 participants.  
+WARNING: This is a rough draft under development and testing. There are missing pieces dealing with closing down the experiment
+and getting a list of payments to be made.  As-is, it is only useful for comment and testing.  Automated
+tests currently indicate that although the software will run with 100 robotic participants, there are throttling issues with
+more than ~ 20-40 participants.  
 
-It creates a "cheap talk" version of a normal form matrix game where moves are visible, but future versions will be able to vary the information conditions
-so that games where the moves are invisible or visible by only one side of the game. 
+It creates a "cheap talk" version of a normal form matrix game where moves are visible, but future versions will be able to
+vary the information conditions so that games where the moves are invisible or visible by only one side of the game. 
 
-Subjects are shown a game matrix and a timer that counts down, and are able to see each others' row/col selections in real time until
-the timer expires. When the timer expires, the selected cell determines earnings accumulated at the top of each subjects' screen
-and in a local mongo database included with meteor. All row/col choices are timestamped for each game.  
+Subjects are shown a game matrix and a timer that counts down, and are able to see each others' row/col selections in real time
+until the timer expires. When the timer expires, the selected cell determines earnings accumulated at the top of each subjects'
+screen and in a local mongo database included with meteor. All row/col choices are timestamped for each game.  
 
 1. get the software onto the server using a terminal window
 
@@ -89,6 +87,14 @@ If you have a computer with [Docker](https://docs.docker.com/engine/installation
  * `drpaulbrewer/matrixgame-test:latest` identifes the Docker image on Dockerhub to be download and run.  This should not be changed.
  
 You should have meteor-matrixgame installed and running (e.g. as described in the "Usage" section near the top of the page) before you run the docker command to start the robots. Then, start the robots.  Then, use your web browser to sign in to matrixgame as an admin and set up a matrix and roll call as you normally would.  The robots will already have logged in and be at the wait screen.  When you run the roll call they will see the button and push it.  When you start the game they will click randomly. The random testing robots and the matrixgame can run on different computers or the same computer, but network performance testing is best done with separate server and participant computers.  
+
+##Copyright
+
+2015- Paul Brewer Economic and Financial Technology Consulting LLC
+
+##License
+
+[MIT](./LICENSE.md)
 
 ##News
 -----
