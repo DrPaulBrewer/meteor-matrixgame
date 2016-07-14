@@ -94,7 +94,7 @@ You should have meteor-matrixgame installed and running (e.g. as described in th
 
 ##License
 
-[MIT](./LICENSE.md)
+[MIT](./License.md)
 
 ##News
 -----
