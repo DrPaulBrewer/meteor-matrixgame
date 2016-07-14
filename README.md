@@ -90,7 +90,7 @@ You should have meteor-matrixgame installed and running (e.g. as described in th
 
 ##Copyright
 
-2015- Paul Brewer Economic and Financial Technology Consulting LLC
+2015- Paul Brewer, Economic and Financial Technology Consulting LLC
 
 ##License
 
